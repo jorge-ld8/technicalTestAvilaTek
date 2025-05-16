@@ -1,0 +1,62 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  password  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  orders    Order[]
+
+  @@map("users")
+}
+
+model Product {
+  id                String         @id @default(uuid())
+  name              String
+  description       String?
+  price             Decimal        @db.Decimal(10, 2)
+  stockAvailability Int            @default(0) @map("stock_availability")
+  createdAt         DateTime       @default(now())
+  updatedAt         DateTime       @updatedAt
+  orderProducts     OrderProduct[]
+
+  @@map("products")
+}
+
+model Order {
+  id            String         @id @default(uuid())
+  userId        String
+  user          User           @relation(fields: [userId], references: [id])
+  orderStatus   String         @default("PENDING") @map("order_status") // PENDING, PROCESSING, SHIPPED, DELIVERED, CANCELLED
+  totalAmount   Decimal?       @map("total_amount") @db.Decimal(10, 2)
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  orderProducts OrderProduct[]
+
+  @@map("orders")
+}
+
+model OrderProduct {
+  id              String   @id @default(uuid())
+  orderId         String
+  order           Order    @relation(fields: [orderId], references: [id])
+  productId       String
+  product         Product  @relation(fields: [productId], references: [id])
+  quantity        Int
+  priceAtPurchase Decimal  @map("price_at_purchase") @db.Decimal(10, 2) // Price of the product when the order was made
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@unique([orderId, productId]) // Optional: Ensures a product appears only once per order directly
+  // If a product can be added multiple times (e.g. as separate lines), remove this.
+  @@map("order_items")
+}
