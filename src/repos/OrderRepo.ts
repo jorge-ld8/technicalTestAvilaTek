@@ -1,9 +1,10 @@
 import prisma, { Order, OrderProduct } from '@src/common/prisma';
-import { CreateOrderProductDto, OrderStatus } from '@src/types/orders';
+import { CreateOrderProductDto, CreateOrderRepoDto, OrderStatus, UpdateOrderRepoDto } from '@src/types/orders';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 import { IOrder } from '@src/models/Order';
-
-
+import { IBaseRepository } from './BaseRepository';
+import { PaginatedResult, PaginationParams } from '@src/types/common';
+import { createPaginatedResult, normalizePaginationParams } from '@src/common/util/pagination';
 
 // Helper function to convert Prisma Order to IOrder
 function mapPrismaOrderToIOrder(
@@ -35,12 +36,10 @@ function mapPrismaOrderToIOrder(
   };
 }
 
-class OrderRepo {
-  async create(
-    userId: string, 
-    items: CreateOrderProductDto[], 
-    totalAmount: number,
-  ): Promise<IOrder> {
+class OrderRepo implements IBaseRepository<IOrder, CreateOrderRepoDto, UpdateOrderRepoDto> {
+  async create(data: CreateOrderRepoDto): Promise<IOrder> {
+    const { userId, items, totalAmount } = data;
+    
     const order = await prisma.order.create({
       data: {
         userId,
@@ -92,9 +91,9 @@ class OrderRepo {
 
   async findByUserId(
     userId: string, 
-    page = 1, 
-    pageSize = 10,
-  ): Promise<{ orders: IOrder[]; totalCount: number }> {
+    pagination: PaginationParams = {},
+  ): Promise<PaginatedResult<IOrder>> {
+    const { page, pageSize } = normalizePaginationParams(pagination);
     
     const skip = (page - 1) * pageSize;
     
@@ -122,16 +121,18 @@ class OrderRepo {
       }),
     ]);
     
-    return {
-      orders: orders.map(mapPrismaOrderToIOrder),
-      totalCount,
-    };
+    return createPaginatedResult(
+      orders.map(mapPrismaOrderToIOrder),
+      {
+        total: totalCount,
+        currentPage: page,
+        pageSize,
+      }
+    );
   }
 
-  async getAll(
-    page = 1, 
-    pageSize = 10,
-  ): Promise<{ orders: IOrder[]; totalCount: number }> {
+  async getAll(pagination: PaginationParams = {}): Promise<PaginatedResult<IOrder>> {
+    const { page, pageSize } = normalizePaginationParams(pagination);
     
     const skip = (page - 1) * pageSize;
     
@@ -156,27 +157,23 @@ class OrderRepo {
       prisma.order.count(),
     ]);
     
-    return {
-      orders: orders.map(mapPrismaOrderToIOrder),
-      totalCount,
-    };
+    return createPaginatedResult(
+      orders.map(mapPrismaOrderToIOrder),
+      {
+        total: totalCount,
+        currentPage: page,
+        pageSize,
+      }
+    );
   }
 
-  async delete(orderId: string): Promise<void> {
-    await prisma.order.delete({
-      where: { id: orderId },
-    });
-  }
-
-  async updateStatus(
-    orderId: string, 
-    status: OrderStatus,
-  ): Promise<IOrder | null> {
-    
+  async update(id: string, data: UpdateOrderRepoDto): Promise<IOrder | null> {
     try {
       const order = await prisma.order.update({
-        where: { id: orderId },
-        data: { orderStatus: status },
+        where: { id },
+        data: {
+          orderStatus: data.orderStatus,
+        },
         include: {
           orderProducts: {
             include: {
@@ -198,6 +195,28 @@ class OrderRepo {
       }
       throw error;
     }
+  }
+
+  async delete(id: string): Promise<boolean> {
+    try {
+      await prisma.order.delete({
+        where: { id },
+      });
+      return true;
+    } catch (error) {
+      if (error instanceof PrismaClientKnownRequestError && error.code === 'P2025') {
+        return false;
+      }
+      throw error;
+    }
+  }
+
+  // Legacy method maintained for backward compatibility
+  async updateStatus(
+    orderId: string, 
+    status: OrderStatus,
+  ): Promise<IOrder | null> {
+    return this.update(orderId, { orderStatus: status });
   }
 }
 

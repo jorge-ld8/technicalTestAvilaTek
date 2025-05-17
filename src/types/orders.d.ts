@@ -20,8 +20,18 @@ export interface CreateOrderProductDto{
 }
 
 export interface CreateOrderDto {
-  totalAmount: number;
   items: CreateOrderItemDto[];
+}
+
+// Repository DTOs
+export interface CreateOrderRepoDto {
+  userId: string;
+  items: CreateOrderProductDto[];
+  totalAmount: number;
+}
+
+export interface UpdateOrderRepoDto {
+  orderStatus?: OrderStatus;
 }
 
 // DTOs for order responses

@@ -1,33 +1,41 @@
 import { BadRequestError, ForbiddenError, NotFoundError } from '@src/common/errors';
 import OrderRepo from '@src/repos/OrderRepo';
-import ProductRepo from '@src/repos/ProductRepo';
 import { 
   CreateOrderDto, 
+  CreateOrderRepoDto,
   OrderResponseDto, 
   OrderStatus,
-} from '@src/types/orders';
+} from '@src/types/orders.d';
 import { UserRole } from '@src/types/auth.d';
 import { PaginatedResult, PaginationParams } from '@src/types/common';
-import { createPaginatedResult, normalizePaginationParams } from '@src/common/util/pagination';
 import { IOrder } from '@src/models/Order';
+import ProductService from './ProductService';
 
 class OrderService {
   private orderRepo = new OrderRepo();
-  private productRepo = new ProductRepo();
+  private productService = new ProductService();
 
   public async createOrder(userId: string, orderData: CreateOrderDto): Promise<OrderResponseDto> {
     if (!orderData.items || orderData.items.length === 0) {
       throw new BadRequestError('Order must contain at least one item');
     }
 
-    let count = 0;
-
-    const finalItems = await Promise.all(orderData.items.map(async (item) => {
-      const product = await this.productRepo.getById(item.productId);
+    // First validate that all products exist and have sufficient stock
+    await Promise.all(orderData.items.map(async (item) => {
+      const product = await this.productService.getById(item.productId);
       if (!product) {
-        throw new NotFoundError('Product not found');
+        throw new NotFoundError(`Product with id ${item.productId} not found`);
       }
-      count += product.price * item.quantity;
+      if (product.stock < item.quantity) {
+        throw new BadRequestError(`Insufficient stock for product '${product.name}'. Available: ${product.stock}, Requested: ${item.quantity}`);
+      }
+    }));
+
+    let totalAmount = 0;
+
+    const orderItems = await Promise.all(orderData.items.map(async (item) => {
+      const product = await this.productService.getById(item.productId);
+      totalAmount += product.price * item.quantity;
       return {
         productId: item.productId,
         quantity: item.quantity,
@@ -35,7 +43,22 @@ class OrderService {
       };
     }));
 
-    const order = await this.orderRepo.create(userId, finalItems, count);
+    const orderRepoData: CreateOrderRepoDto = {
+      userId,
+      items: orderItems,
+      totalAmount,
+    };
+
+    // Create the order
+    const order = await this.orderRepo.create(orderRepoData);
+
+    // Now update the stock for each product
+    await Promise.all(orderData.items.map(async (item) => {
+      const product = await this.productService.getById(item.productId);
+      const newStock = product.stock - item.quantity;
+      await this.productService.updateStock(item.productId, newStock);
+    }));
+
     return this.mapOrderToResponseDto(order);
   }
 
@@ -62,47 +85,52 @@ class OrderService {
     userId: string, 
     pagination: PaginationParams = {},
   ): Promise<PaginatedResult<OrderResponseDto>> {
-    const { page, pageSize } = normalizePaginationParams(pagination);
+    const paginatedOrders = await this.orderRepo.findByUserId(userId, pagination);
+    const orderResponses = paginatedOrders.data.map(order => this.mapOrderToResponseDto(order));
 
-    const { orders, totalCount } = await this.orderRepo.findByUserId(userId, page, pageSize);
-    const orderResponses = orders.map(order => this.mapOrderToResponseDto(order));
-
-    return createPaginatedResult(
-      orderResponses, 
-      {
-        total: totalCount,
-        currentPage: page,
-        pageSize,
-      },
-    );
+    return {
+      data: orderResponses,
+      metadata: paginatedOrders.metadata,
+    };
   }
 
   public async getAllOrders(
     pagination: PaginationParams = {},
   ): Promise<PaginatedResult<OrderResponseDto>> {
-    const { page, pageSize } = normalizePaginationParams(pagination);
+    const paginatedOrders = await this.orderRepo.getAll(pagination);
+    const orderResponses = paginatedOrders.data.map(order => this.mapOrderToResponseDto(order));
 
-    const { orders, totalCount } = await this.orderRepo.getAll(page, pageSize);
-    const orderResponses = orders.map(order => this.mapOrderToResponseDto(order));
-
-    return createPaginatedResult(
-      orderResponses, 
-      {
-        total: totalCount,
-        currentPage: page,
-        pageSize,
-      },
-    );
+    return {
+      data: orderResponses,
+      metadata: paginatedOrders.metadata
+    };
   }
 
   public async updateOrderStatus(
     orderId: string, 
     status: OrderStatus
   ): Promise<OrderResponseDto> {
-    const updatedOrder = await this.orderRepo.updateStatus(orderId, status);
+    // Get the original order to compare status
+    const originalOrder = await this.orderRepo.getById(orderId);
+    
+    if (!originalOrder) {
+      throw new NotFoundError('Order not found');
+    }
+    
+    // Update the order status
+    const updatedOrder = await this.orderRepo.update(orderId, { orderStatus: status });
     
     if (!updatedOrder) {
       throw new NotFoundError('Order not found');
+    }
+    
+    // If the order is being cancelled, restore the stock
+    if (status === OrderStatus.CANCELLED && originalOrder.orderStatus !== OrderStatus.CANCELLED) {
+      await Promise.all(originalOrder.orderProducts.map(async (item) => {
+        const product = await this.productService.getById(item.productId);
+        const newStock = product.stock + item.quantity;
+        await this.productService.updateStock(item.productId, newStock);
+      }));
     }
 
     return this.mapOrderToResponseDto(updatedOrder);
