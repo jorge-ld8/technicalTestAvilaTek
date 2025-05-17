@@ -1,8 +1,8 @@
-import { Request, Response, NextFunction } from 'express';
+import { Response, NextFunction } from 'express';
 import { AuthenticatedRequest } from '@src/types/auth';
 import OrderService from '@src/services/OrderService';
 import HttpStatusCodes from '@src/common/constants/HttpStatusCodes';
-import { CreateOrderDto, OrderStatus, UpdateOrderStatusDto } from '@src/types/orders';
+import { CreateOrderDto, UpdateOrderStatusDto } from '@src/types/orders';
 import { PaginationParams } from '@src/types/common';
 
 class OrderController {

@@ -1,5 +1,5 @@
 import prisma, { Order, OrderProduct } from '@src/common/prisma';
-import { CreateOrderProductDto, CreateOrderRepoDto, OrderStatus, UpdateOrderRepoDto } from '@src/types/orders';
+import { CreateOrderRepoDto, OrderStatus, UpdateOrderRepoDto } from '@src/types/orders';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 import { IOrder } from '@src/models/Order';
 import { IBaseRepository } from './BaseRepository';
