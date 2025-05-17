@@ -1,4 +1,4 @@
-import { IProduct } from '@src/repos/ProductRepo';
+import { IProduct } from '@src/models/Product';
 import ProductRepo from '@src/repos/ProductRepo';
 import { CreateProductDto, UpdateProductDto } from '@src/types/products';
 import { NotFoundError, BadRequestError } from '@src/common/errors';
