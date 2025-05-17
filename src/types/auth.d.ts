@@ -13,10 +13,24 @@ export interface AuthenticatedRequest extends Request {
   user?: AuthenticatedUser;
 }
 
-
 export interface RegisterUserDto {
   firstName: string;
   lastName: string;
   email: string;
   password: string;
 }
+
+export interface RegisterResponse {
+    user: IUser;
+}
+
+export interface LoginUserDto {
+  email: string;
+  password: string;
+}
+
+export interface LoginResponse {
+  user: IUser;
+  token: string;
+}
+

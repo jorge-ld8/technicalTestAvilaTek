@@ -14,6 +14,7 @@ import { NodeEnvs } from '@src/common/constants';
 import prismaInstance from './common/prisma';
 import { User } from '../generated/prisma/edge';
 import AuthRouter from './routes/AuthRouter';
+import { errorHandler } from './middlewares/errorHandler';
 
 /******************************************************************************
                                 Setup
@@ -40,53 +41,12 @@ if (ENV.NodeEnv === NodeEnvs.Production) {
 // Add APIs, must be after middleware
 app.use(Paths.Base, BaseRouter);
 
-// Add error handler
-app.use((err: Error, _: Request, res: Response, next: NextFunction) => {
-  if (ENV.NodeEnv !== NodeEnvs.Test.valueOf()) {
-    logger.err(err, true);
-  }
-  let status = HttpStatusCodes.BAD_REQUEST;
-  if (err instanceof RouteError) {
-    status = err.status;
-    res.status(status).json({ error: err.message });
-  }
-  return next(err);
+// Setup routes
+app.use('/auth', AuthRouter);
+app.get('/health', (req: Request, res: Response) => {
+  res.status(HttpStatusCodes.OK).json({ status: 'OK' });
 });
 
-// app.get('/', (_: Request, res: Response) => {
-//   res.status(200).send('Hello World');
-// });
-
-// app.get('/users', async (_, res: Response) => {
-//   const users: User[] = await prismaInstance.user.findMany();
-//   res.json(users);
-// });
-
-// app.post('/users', async (req: Request, res: Response) => {
-//   const { firstName, lastName, email, password } = req.body;
-//   const user: User = await prismaInstance.user.create({
-//     data: { firstName, lastName, email, password },
-//   });
-//   res.json(user);
-// });
-
-// app.get('/users/:id', async (req: Request, res: Response) => {
-//   console.log('got into /users/:id');
-//   const { id } = req.params;
-//   const user = await prismaInstance.user.findUnique({
-//     where: { id },
-//   });
-//   res.json(user);
-// });
-
-// app.delete('/users/:id', async (req: Request, res: Response) => {
-//   const { id } = req.params;
-//   const user = await prismaInstance.user.delete({
-//     where: { id },
-//   });
-//   res.json(user);
-// });
-
-app.use('/auth', AuthRouter);
+app.use(errorHandler);
 
 export default app;
