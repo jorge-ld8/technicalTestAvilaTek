@@ -1,12 +1,11 @@
 import morgan from 'morgan';
 import helmet from 'helmet';
 import express, { Request, Response } from 'express';
-import BaseRouter from '@src/routes';
+import apiRouter from '@src/routes';
 import Paths from '@src/common/constants/Paths';
 import ENV from '@src/common/constants/ENV';
 import HttpStatusCodes from '@src/common/constants/HttpStatusCodes';
 import { NodeEnvs } from '@src/common/constants';
-import AuthRouter from './routes/AuthRouter';
 import { errorHandler } from './middlewares/errorHandler';
 
 const app = express();
@@ -27,11 +26,10 @@ if (ENV.NodeEnv === NodeEnvs.Production) {
   }
 }
 
-// Add APIs, must be after middleware
-app.use(Paths.Base, BaseRouter);
+// Add all API routes through the unified router
+app.use(Paths.Base, apiRouter);
 
-// Setup routes
-app.use('/auth', AuthRouter);
+// Health check endpoint
 app.get('/health', (req: Request, res: Response) => {
   res.status(HttpStatusCodes.OK).json({ status: 'OK' });
 });

@@ -3,6 +3,14 @@ import { RequestHandler, Router } from 'express';
 import { validateRequest } from '@src/middlewares/validateRequest';
 import { loginSchema, registerSchema } from '@src/validators/auth.validator';
 import { authenticate } from '@src/middlewares/authMiddleware';
+import rateLimiter from 'express-rate-limit';
+
+const limiter = rateLimiter({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  limit: 3, // limit each IP to 100 requests per windowMs
+  message: 'Too many requests from this IP, please try again later'
+});
+
 class AuthRouter {
   private router: Router;
   private controller: AuthController;
@@ -19,11 +27,13 @@ class AuthRouter {
 
   private setupRoutes() {
     this.router.post('/register', 
-        validateRequest(registerSchema) as RequestHandler,
-        (req, res, next) => this.controller.register(req, res, next));
+      limiter,
+      validateRequest(registerSchema) as RequestHandler,
+      (req, res, next) => this.controller.register(req, res, next));
     this.router.post('/login', 
-        validateRequest(loginSchema) as RequestHandler,
-        (req, res, next) => this.controller.login(req, res, next));
+      limiter,
+      validateRequest(loginSchema) as RequestHandler,
+      (req, res, next) => this.controller.login(req, res, next));
     this.router.get('/profile', 
       authenticate,
       (req, res, next) => this.controller.getProfile(req, res, next));
