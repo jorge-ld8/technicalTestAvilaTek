@@ -1,11 +1,19 @@
 import { RequestHandler, Router } from 'express';
 import ProductController from '@src/controllers/ProductController';
 import { validateRequest } from '@src/middlewares/validateRequest';
-import { createProductSchema, updateProductSchema } from '@src/validators/product.validator';
+
 import { authenticate } from '@src/middlewares/authMiddleware';
-import { authorize } from '@src/middlewares/authorizeMiddleware';
-import { UserRole } from '@src/types/auth.types';
+import { authorize } from '@src/middlewares/authMiddleware';
+import { UserRole } from '@src/types/auth.d';
 import { BaseRouter } from './common/BaseRouter';
+import { 
+  createProductsSchema, 
+  deleteProductsSchema, 
+  getInStockSchema, 
+  searchProductSchema, 
+  updateProductsSchema, 
+  updateStockSchema, 
+} from '@src/validators/product.validator';
 
 class ProductRouter extends BaseRouter<ProductController> {
   constructor() {
@@ -15,28 +23,43 @@ class ProductRouter extends BaseRouter<ProductController> {
   protected setupRoutes(): void {
     // Public routes - anyone can view products
     this.router.get('/', 
+      validateRequest(getInStockSchema) as RequestHandler,
       (req, res, next) => this.controller.getAllProducts(req, res, next));
+    
+    this.router.get('/in-stock', 
+      validateRequest(getInStockSchema) as RequestHandler,
+      (req, res, next) => this.controller.getInStockProducts(req, res, next));
+    
+    this.router.get('/search', 
+      validateRequest(searchProductSchema) as RequestHandler,
+      (req, res, next) => this.controller.searchProducts(req, res, next));
     
     this.router.get('/:id', 
       (req, res, next) => this.controller.getProductById(req, res, next));
     
-    // Protected routes - only admin can modify products
     this.router.post('/', 
       authenticate,
       authorize([UserRole.ADMIN]),
-      validateRequest(createProductSchema) as RequestHandler,
-      (req, res, next) => this.controller.createProduct(req, res, next));
+      validateRequest(createProductsSchema) as RequestHandler,
+      (req, res, next) => this.controller.createProducts(req, res, next));
     
-    this.router.put('/:id', 
+    this.router.put('/', 
       authenticate,
       authorize([UserRole.ADMIN]),
-      validateRequest(updateProductSchema) as RequestHandler,
-      (req, res, next) => this.controller.updateProduct(req, res, next));
+      validateRequest(updateProductsSchema) as RequestHandler,
+      (req, res, next) => this.controller.updateProducts(req, res, next));
     
-    this.router.delete('/:id', 
+    this.router.delete('/', 
       authenticate,
       authorize([UserRole.ADMIN]),
-      (req, res, next) => this.controller.deleteProduct(req, res, next));
+      validateRequest(deleteProductsSchema) as RequestHandler,
+      (req, res, next) => this.controller.deleteProducts(req, res, next));
+    
+    this.router.put('/:id/stock', 
+      authenticate,
+      authorize([UserRole.ADMIN]),
+      validateRequest(updateStockSchema) as RequestHandler,
+      (req, res, next) => this.controller.updateProductStock(req, res, next));
   }
 }
 
