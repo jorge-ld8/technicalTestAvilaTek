@@ -20,6 +20,7 @@ export interface CreateOrderProductDto{
 }
 
 export interface CreateOrderDto {
+  totalAmount: number;
   items: CreateOrderItemDto[];
 }
 

@@ -1,5 +1,5 @@
 import { BadRequestError, ForbiddenError, NotFoundError } from '@src/common/errors';
-import OrderRepo, { IOrder } from '@src/repos/OrderRepo';
+import OrderRepo from '@src/repos/OrderRepo';
 import ProductRepo from '@src/repos/ProductRepo';
 import { 
   CreateOrderDto, 
@@ -9,6 +9,7 @@ import {
 import { UserRole } from '@src/types/auth.d';
 import { PaginatedResult, PaginationParams } from '@src/types/common';
 import { createPaginatedResult, normalizePaginationParams } from '@src/common/util/pagination';
+import { IOrder } from '@src/models/Order';
 
 class OrderService {
   private orderRepo = new OrderRepo();
@@ -41,7 +42,7 @@ class OrderService {
   public async getOrderById(
     orderId: string, 
     userId: string, 
-    userRole: UserRole
+    userRole: UserRole,
   ): Promise<OrderResponseDto> {
     const order = await this.orderRepo.findById(orderId);
     
@@ -81,7 +82,7 @@ class OrderService {
   ): Promise<PaginatedResult<OrderResponseDto>> {
     const { page, pageSize } = normalizePaginationParams(pagination);
 
-    const { orders, totalCount } = await this.orderRepo.findAll(page, pageSize);
+    const { orders, totalCount } = await this.orderRepo.getAll(page, pageSize);
     const orderResponses = orders.map(order => this.mapOrderToResponseDto(order));
 
     return createPaginatedResult(

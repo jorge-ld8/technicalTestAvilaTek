@@ -1,29 +1,9 @@
-import prisma, { Order, OrderProduct, Product } from '@src/common/prisma';
-import { Decimal } from '@prisma/client/runtime/library';
+import prisma, { Order, OrderProduct } from '@src/common/prisma';
 import { CreateOrderProductDto, OrderStatus } from '@src/types/orders';
-import { IOrderItemInput } from '@src/types/orders';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
-import { BadRequestError, NotFoundError } from '@src/common/errors';
+import { IOrder } from '@src/models/Order';
 
-export interface IOrder {
-  id: string;
-  userId: string;
-  orderStatus: OrderStatus;
-  totalAmount: number;
-  orderProducts: IOrderProduct[];
-}
 
-export interface IOrderProduct {
-  id: string;
-  orderId: string;
-  productId: string;
-  quantity: number;
-  priceAtPurchase: number;
-  product?: {
-    name: string,
-    description: string | null,
-  };
-}
 
 // Helper function to convert Prisma Order to IOrder
 function mapPrismaOrderToIOrder(
@@ -90,7 +70,7 @@ class OrderRepo {
     return mapPrismaOrderToIOrder(order);
   }
 
-  async findById(orderId: string): Promise<IOrder | null> {
+  async getById(orderId: string): Promise<IOrder | null> {
     const order = await prisma.order.findUnique({
       where: { id: orderId },
       include: {
@@ -113,7 +93,7 @@ class OrderRepo {
   async findByUserId(
     userId: string, 
     page = 1, 
-    pageSize = 10
+    pageSize = 10,
   ): Promise<{ orders: IOrder[]; totalCount: number }> {
     
     const skip = (page - 1) * pageSize;
@@ -148,9 +128,9 @@ class OrderRepo {
     };
   }
 
-  async findAll(
+  async getAll(
     page = 1, 
-    pageSize = 10
+    pageSize = 10,
   ): Promise<{ orders: IOrder[]; totalCount: number }> {
     
     const skip = (page - 1) * pageSize;
@@ -163,7 +143,7 @@ class OrderRepo {
               product: {
                 select: {
                   name: true,
-                  description: true
+                  description: true,
                 }
               }
             }
@@ -180,6 +160,12 @@ class OrderRepo {
       orders: orders.map(mapPrismaOrderToIOrder),
       totalCount,
     };
+  }
+
+  async delete(orderId: string): Promise<void> {
+    await prisma.order.delete({
+      where: { id: orderId },
+    });
   }
 
   async updateStatus(

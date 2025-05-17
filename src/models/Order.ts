@@ -1,4 +1,3 @@
-import { IOrderProduct } from '@src/repos/OrderRepo';
 import { OrderStatus } from '@src/types/orders';
 
 export interface IOrder {
@@ -8,3 +7,15 @@ export interface IOrder {
     totalAmount: number;
     orderProducts: IOrderProduct[];
   }
+
+export interface IOrderProduct {
+id: string;
+orderId: string;
+productId: string;
+quantity: number;
+priceAtPurchase: number;
+product?: {
+    name: string,
+    description: string | null,
+};
+}
