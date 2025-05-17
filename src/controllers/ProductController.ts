@@ -130,7 +130,7 @@ class ProductController {
       
       if (typeof stock !== 'number') {
         res.status(HttpStatusCodes.BAD_REQUEST).json({ 
-          message: 'Stock must be a number' 
+          message: 'Stock must be a number',
         });
         return;
       }

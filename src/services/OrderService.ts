@@ -44,7 +44,7 @@ class OrderService {
     userId: string, 
     userRole: UserRole,
   ): Promise<OrderResponseDto> {
-    const order = await this.orderRepo.findById(orderId);
+    const order = await this.orderRepo.getById(orderId);
     
     if (!order) {
       throw new NotFoundError('Order not found');
