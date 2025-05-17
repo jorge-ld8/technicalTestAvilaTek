@@ -10,7 +10,7 @@ export interface IProduct {
   name: string;
   description: string | null;
   price: number;
-  stockAvailability: number;
+  stock: number;
   createdAt?: Date;
   updatedAt?: Date;
 }
@@ -24,7 +24,7 @@ function mapPrismaProductToIProduct(product: Product): IProduct {
     price: typeof product.price === 'object' && 'toNumber' in product.price 
       ? (product.price as Decimal).toNumber() 
       : Number(product.price),
-    stockAvailability: product.stockAvailability,
+    stock: product.stock,
     createdAt: product.createdAt,
     updatedAt: product.updatedAt,
   };
@@ -49,7 +49,7 @@ class ProductRepo {
         name: productDto.name,
         description: productDto.description ?? null,
         price: productDto.price,
-        stockAvailability: productDto.stockAvailability,
+        stock: productDto.stock,
       },
     });
     return mapPrismaProductToIProduct(product);
@@ -63,7 +63,7 @@ class ProductRepo {
             name: dto.name,
             description: dto.description ?? null,
             price: dto.price,
-            stockAvailability: dto.stockAvailability,
+            stock: dto.stock,
           },
         })
       )
@@ -80,7 +80,7 @@ class ProductRepo {
           ...(productDto.name !== undefined && { name: productDto.name }),
           ...(productDto.description !== undefined && { description: productDto.description }),
           ...(productDto.price !== undefined && { price: productDto.price }),
-          ...(productDto.stockAvailability !== undefined && { stockAvailability: productDto.stockAvailability }),
+          ...(productDto.stock !== undefined && { stock: productDto.stock }),
         },
       });
       return mapPrismaProductToIProduct(product);
@@ -106,7 +106,7 @@ class ProductRepo {
               ...(data.name !== undefined && { name: data.name }),
               ...(data.description !== undefined && { description: data.description }),
               ...(data.price !== undefined && { price: data.price }),
-              ...(data.stockAvailability !== undefined && { stockAvailability: data.stockAvailability }),
+              ...(data.stock !== undefined && { stock: data.stock }),
             },
           });
           updatedProducts.push(mapPrismaProductToIProduct(product));
@@ -170,7 +170,7 @@ class ProductRepo {
   async getInStock(minStock = 1): Promise<IProduct[]> {
     const products = await prisma.product.findMany({
       where: {
-        stockAvailability: {
+        stock: {
           gte: minStock,
         },
       },
@@ -184,7 +184,7 @@ class ProductRepo {
       const product = await prisma.product.update({
         where: { id },
         data: {
-          stockAvailability: newStock,
+          stock: newStock,
         },
       });
       return mapPrismaProductToIProduct(product);

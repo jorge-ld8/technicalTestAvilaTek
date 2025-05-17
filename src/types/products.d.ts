@@ -3,12 +3,12 @@ export interface CreateProductDto {
     name: string;
     description?: string;
     price: number;
-    stockAvailability: number;
+    stock: number;
   }
   
 export interface UpdateProductDto {
     name?: string;
     description?: string | null;
     price?: number;
-    stockAvailability?: number;
+    stock?: number;
 }

@@ -5,7 +5,7 @@ const productSchema = z.object({
   name: z.string().min(1, { message: 'Product name is required' }),
   description: z.string().optional(),
   price: z.number().positive({ message: 'Price must be a positive number' }),
-  stockAvailability: z.number().int().nonnegative({ message: 'Stock must be a non-negative integer' }),
+  stock: z.number().int().nonnegative({ message: 'Stock must be a non-negative integer' }),
 });
 
 // Schema for creating products
@@ -22,7 +22,7 @@ const productUpdateSchema = z.object({
     name: z.string().min(1, { message: 'Product name is required' }).optional(),
     description: z.string().nullable().optional(),
     price: z.number().positive({ message: 'Price must be a positive number' }).optional(),
-    stockAvailability: z.number().int().nonnegative({ message: 'Stock must be a non-negative integer' }).optional(),
+    stock: z.number().int().nonnegative({ message: 'Stock must be a non-negative integer' }).optional(),
   }),
 });
 

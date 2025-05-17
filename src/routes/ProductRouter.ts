@@ -43,7 +43,7 @@ class ProductRouter extends BaseRouter<ProductController> {
       validateRequest(createProductsSchema) as RequestHandler,
       (req, res, next) => this.controller.createProducts(req, res, next));
     
-    this.router.put('/', 
+    this.router.patch('/', 
       authenticate,
       authorize([UserRole.ADMIN]),
       validateRequest(updateProductsSchema) as RequestHandler,

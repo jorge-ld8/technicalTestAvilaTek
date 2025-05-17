@@ -44,7 +44,7 @@ class ProductController {
         name: item.name,
         description: item.description,
         price: item.price,
-        stockAvailability: item.stockAvailability,
+        stock: item.stock,
       }));
       
       const createdProducts = await this.productService.createMany(productDataList);
@@ -74,7 +74,7 @@ class ProductController {
         if (item.data.name !== undefined) updateData.name = item.data.name;
         if (item.data.description !== undefined) updateData.description = item.data.description;
         if (item.data.price !== undefined) updateData.price = item.data.price;
-        if (item.data.stockAvailability !== undefined) updateData.stockAvailability = item.data.stockAvailability;
+        if (item.data.stock !== undefined) updateData.stock = item.data.stock;
         
         return { id: item.id, data: updateData };
       });

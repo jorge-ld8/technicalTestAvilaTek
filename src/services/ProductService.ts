@@ -18,11 +18,6 @@ class ProductService {
     return product;
   }
 
-  public async create(createProductDto: CreateProductDto): Promise<IProduct> {
-    this.validateProduct(createProductDto);
-    return await this.productRepo.create(createProductDto);
-  }
-
   public async createMany(createProductDtos: CreateProductDto[]): Promise<IProduct[]> {
     if (!createProductDtos.length) {
       throw new BadRequestError('No products provided for creation');
@@ -35,8 +30,8 @@ class ProductService {
   }
 
   public async updateMany(productsToUpdate: { id: string, data: UpdateProductDto }[]): Promise<{
-    updated: IProduct[];
-    notFound: string[];
+    updated: IProduct[],
+    notFound: string[],
   }> {
     if (!productsToUpdate.length) {
       throw new BadRequestError('No products provided for update');
@@ -110,7 +105,7 @@ class ProductService {
       throw new BadRequestError('Price must be greater than zero');
     }
 
-    if (product.stockAvailability < 0) {
+    if (product.stock < 0) {
       throw new BadRequestError('Stock availability cannot be negative');
     }
   }
@@ -120,7 +115,7 @@ class ProductService {
       throw new BadRequestError('Price must be greater than zero');
     }
 
-    if (product.stockAvailability !== undefined && product.stockAvailability < 0) {
+    if (product.stock !== undefined && product.stock < 0) {
       throw new BadRequestError('Stock availability cannot be negative');
     }
   }
