@@ -96,7 +96,6 @@ class ProductRepo {
   async updateMany(productsToUpdate: { id: string, data: UpdateProductDto }[]):Promise<IProduct[]> {
     const updatedProducts: IProduct[] = [];
     
-    // Use transaction to ensure atomicity
     await prisma.$transaction(async (tx) => {
       for (const { id, data } of productsToUpdate) {
         try {
@@ -111,9 +110,8 @@ class ProductRepo {
           });
           updatedProducts.push(mapPrismaProductToIProduct(product));
         } catch (error) {
-          // If one update fails, skip it and continue with others
           if (!(error instanceof PrismaClientKnownRequestError && error.code === 'P2025')) {
-            throw error; // Re-throw if it's not a "not found" error
+            throw error;
           }
         }
       }
@@ -137,9 +135,9 @@ class ProductRepo {
     }
   }
 
-  async deleteMany(ids: string[]): Promise<{ success: string[]; notFound: string[] }> {
+  async deleteMany(ids: string[]): Promise<{ deleted: string[], notFound: string[] }> {
     const results = {
-      success: [] as string[],
+      deleted: [] as string[],
       notFound: [] as string[],
     };
     
@@ -149,7 +147,7 @@ class ProductRepo {
           await tx.product.delete({
             where: { id },
           });
-          results.success.push(id);
+          results.deleted.push(id);
         } catch (error) {
           if (error instanceof PrismaClientKnownRequestError && error.code === 'P2025') {
             results.notFound.push(id);

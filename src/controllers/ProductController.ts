@@ -29,13 +29,14 @@ class ProductController {
       next(error);
     }
   }
+
   public async createProducts(req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> {
     try {
       const { products } = req.body as { products?: CreateProductDto[] };
       
       if (!products || !Array.isArray(products)) {
         res.status(HttpStatusCodes.BAD_REQUEST).json({
-          message: 'Products must be provided as an array'
+          message: 'Products must be provided as an array',
         });
         return;
       }
@@ -96,7 +97,7 @@ class ProductController {
       
       if (!ids || !Array.isArray(ids)) {
         res.status(HttpStatusCodes.BAD_REQUEST).json({
-          message: 'Product IDs must be provided as an array'
+          message: 'Product IDs must be provided as an array',
         });
         return;
       }
@@ -104,8 +105,8 @@ class ProductController {
       const result = await this.productService.deleteMany(ids);
       
       res.status(HttpStatusCodes.OK).json({
-        success: result.success,
-        notFound: result.notFound
+        deleted: result.deleted,
+        notFound: result.notFound,
       });
     } catch (error) {
       next(error);

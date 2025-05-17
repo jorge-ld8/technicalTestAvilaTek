@@ -54,7 +54,7 @@ class ProductService {
     
     // Filter to only include existing products
     const updatesForExistingProducts = productsToUpdate.filter(p => 
-      existingProducts.has(p.id)
+      existingProducts.has(p.id),
     );
     
     const notFoundIds = allIds.filter(id => !existingProducts.has(id));
@@ -67,8 +67,8 @@ class ProductService {
   }
 
   public async deleteMany(ids: string[]): Promise<{
-    success: string[];
-    notFound: string[];
+    deleted: string[],
+    notFound: string[],
   }> {
     if (!ids.length) {
       throw new BadRequestError('No product IDs provided for deletion');

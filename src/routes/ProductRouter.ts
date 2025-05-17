@@ -23,7 +23,6 @@ class ProductRouter extends BaseRouter<ProductController> {
   protected setupRoutes(): void {
     // Public routes - anyone can view products
     this.router.get('/', 
-      validateRequest(getInStockSchema) as RequestHandler,
       (req, res, next) => this.controller.getAllProducts(req, res, next));
     
     this.router.get('/in-stock', 
