@@ -1,0 +1,51 @@
+import { Request } from 'express';
+
+export interface AuthenticatedUser {
+  id: string; 
+  email: string;
+  role: UserRole;
+}
+
+export interface AuthenticatedRequest extends Request {
+  user?: AuthenticatedUser;
+}
+
+export interface RegisterUserDto {
+  firstName: string;
+  lastName: string;
+  email: string;
+  password: string;
+  role?: UserRole;
+}
+
+export interface RegisterResponse {
+    user: IUser;
+}
+
+export interface LoginUserDto {
+  email: string;
+  password: string;
+}
+
+export interface LoginResponse {
+  user: IUser;
+  token: string;
+}
+export enum UserRole {
+    CLIENT = 'CLIENT',
+    ADMIN = 'ADMIN'
+  }
+  
+export interface JwtPayload {
+    userId: string;
+    email: string;
+    role: UserRole;
+  }
+  
+export interface AuthUser {
+    id: string;
+    email: string;
+    role: UserRole;
+  }
+  
+

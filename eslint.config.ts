@@ -35,7 +35,7 @@ export default tseslint.config(
   },
   {
     rules: {
-      '@typescript-eslint/explicit-member-accessibility': 'warn',
+      '@typescript-eslint/explicit-member-accessibility': 0,
       '@typescript-eslint/no-misused-promises': 0,
       '@typescript-eslint/no-floating-promises': 0,
       '@typescript-eslint/no-confusing-void-expression': 0,
@@ -49,11 +49,12 @@ export default tseslint.config(
       '@typescript-eslint/no-unused-vars': 'warn',
       '@typescript-eslint/no-unsafe-enum-comparison': 0,
       '@typescript-eslint/no-unnecessary-type-parameters': 0,
+      '@typescript-eslint/no-unsafe-assignment': 0,
       '@stylistic/js/no-extra-semi': 'warn',
       'max-len': [
         'warn',
         {
-          'code': 80,
+          'code': 100,
         },
       ],
       '@stylistic/ts/semi': ['warn', 'always'],

@@ -1,130 +1,87 @@
 import { IUser } from '@src/models/User';
-import { getRandomInt } from '@src/common/util/misc';
+import prisma, { User } from '@src/common/prisma';
+import { RegisterUserDto, UserRole } from '@src/types/auth';
 
-import orm from './MockOrm';
 
+function mapPrismaUserToIUser(user: User): IUser {
+  return {
+    id: user.id,
+    firstName: user.firstName,
+    lastName: user.lastName,
+    email: user.email,
+    password: user.password,
+    role: user.role as UserRole,
+  };
+}
 
-/******************************************************************************
-                                Functions
-******************************************************************************/
-
-/**
- * Get one user.
- */
-async function getOne(email: string): Promise<IUser | null> {
-  const db = await orm.openDb();
-  for (const user of db.users) {
-    if (user.email === email) {
-      return user;
-    }
+class UserRepo {
+  async getOne(email: string): Promise<IUser | null> {
+    const user = await prisma.user.findUnique({
+      where: { email },
+    });
+    return user ? mapPrismaUserToIUser(user) : null;
   }
-  return null;
-}
 
-/**
- * See if a user with the given id exists.
- */
-async function persists(id: number): Promise<boolean> {
-  const db = await orm.openDb();
-  for (const user of db.users) {
-    if (user.id === id) {
-      return true;
-    }
+  async getById(id: string): Promise<IUser | null> {
+    const user = await prisma.user.findUnique({
+      where: { id },
+    });
+    return user ? mapPrismaUserToIUser(user) : null;
   }
-  return false;
-}
 
-/**
- * Get all users.
- */
-async function getAll(): Promise<IUser[]> {
-  const db = await orm.openDb();
-  return db.users;
-}
+  async getAll(): Promise<IUser[]> {
+    const users = await prisma.user.findMany();
+    return users.map(mapPrismaUserToIUser);
+  }
 
-/**
- * Add one user.
- */
-async function add(user: IUser): Promise<void> {
-  const db = await orm.openDb();
-  user.id = getRandomInt();
-  db.users.push(user);
-  return orm.saveDb(db);
-}
+  async add(registerUserDto: RegisterUserDto): Promise<IUser> {
+    const user = await prisma.user.create({
+      data: {
+        firstName: registerUserDto.firstName,
+        lastName: registerUserDto.lastName,
+        email: registerUserDto.email,
+        password: registerUserDto.password ?? '',
+      },
+    });
+    return mapPrismaUserToIUser(user);
+  }
 
-/**
- * Update a user.
- */
-async function update(user: IUser): Promise<void> {
-  const db = await orm.openDb();
-  for (let i = 0; i < db.users.length; i++) {
-    if (db.users[i].id === user.id) {
-      const dbUser = db.users[i];
-      db.users[i] = {
-        ...dbUser,
-        name: user.name,
+  async update(user: IUser): Promise<void> {
+    await prisma.user.update({
+      where: { id: user.id },
+      data: {
+        firstName: user.firstName,
+        lastName: user.lastName,
         email: user.email,
-      };
-      return orm.saveDb(db);
-    }
+        password: user.password ?? '',
+      },
+    });
+  }
+
+  async delete(id: string): Promise<void> {
+    await prisma.user.delete({
+      where: { id },
+    });
+  }
+
+  async deleteAll(): Promise<void> {
+    await prisma.user.deleteMany();
+  } 
+
+  async insertMult(users: IUser[]): Promise<IUser[]> {
+    const createdUsers = await prisma.$transaction(
+      users.map(user => 
+        prisma.user.create({
+          data: {
+            ...user,
+            password: user.password ?? '',
+            createdAt: new Date(),
+          },
+        }),
+      ),
+    );
+    return createdUsers.map(mapPrismaUserToIUser);
   }
 }
 
-/**
- * Delete one user.
- */
-async function delete_(id: number): Promise<void> {
-  const db = await orm.openDb();
-  for (let i = 0; i < db.users.length; i++) {
-    if (db.users[i].id === id) {
-      db.users.splice(i, 1);
-      return orm.saveDb(db);
-    }
-  }
-}
-
-
-// **** Unit-Tests Only **** //
-
-/**
- * Delete every user record.
- */
-async function deleteAllUsers(): Promise<void> {
-  const db = await orm.openDb();
-  db.users = [];
-  return orm.saveDb(db);
-}
-
-/**
- * Insert multiple users. Can't do multiple at once cause using a plain file 
- * for nmow.
- */
-async function insertMult(
-  users: IUser[] | readonly IUser[],
-): Promise<IUser[]> {
-  const db = await orm.openDb(),
-    usersF = [ ...users ];
-  for (const user of usersF) {
-    user.id = getRandomInt();
-    user.created = new Date();
-  }
-  db.users = [ ...db.users, ...users ];
-  await orm.saveDb(db);
-  return usersF;
-}
-
-
-/******************************************************************************
-                                Export default
-******************************************************************************/
-
-export default {
-  getOne,
-  persists,
-  getAll,
-  add,
-  update,
-  delete: delete_,
-  deleteAllUsers,
-  insertMult,
-} as const;
+export default UserRepo;

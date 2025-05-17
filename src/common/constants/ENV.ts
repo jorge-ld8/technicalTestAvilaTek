@@ -1,4 +1,4 @@
-import jetEnv, { num } from 'jet-env';
+import jetEnv, { num, str } from 'jet-env';
 import { isEnumVal } from 'jet-validators';
 
 import { NodeEnvs } from '.';
@@ -11,6 +11,7 @@ import { NodeEnvs } from '.';
 const ENV = jetEnv({
   NodeEnv: isEnumVal(NodeEnvs),
   Port: num,
+  JwtSecret: str,
 });
 
 
