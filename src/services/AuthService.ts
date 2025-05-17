@@ -11,7 +11,7 @@ import
   NotFoundError 
 } from '@src/common/errors';
 
-class UserService {
+class AuthService {
   private userRepo = new UserRepo();
 
   public async getAll(): Promise<IUser[]> {
@@ -80,4 +80,4 @@ class UserService {
   }
 }
 
-export default UserService;
+export default AuthService;
