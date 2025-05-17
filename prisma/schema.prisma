@@ -27,7 +27,7 @@ model Product {
   name              String
   description       String?
   price             Decimal     @db.Decimal(10, 2)
-  stockAvailability Int         @default(0) @map("stock_availability")
+  stock             Int         @default(0) @map("stock")
   createdAt         DateTime    @default(now())
   updatedAt         DateTime    @updatedAt
   orderProducts     OrderProduct[] 

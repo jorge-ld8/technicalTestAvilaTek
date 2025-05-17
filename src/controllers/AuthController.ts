@@ -10,15 +10,16 @@ class AuthController {
     this.authService = new AuthService();
   }
 
-  public async register(req: Request, res: Response, next: NextFunction) {
+  public async register(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-      const { firstName, lastName, email, password } = req.body;
+      const { firstName, lastName, email, password, role  } = req.body;
 
       const user = await this.authService.register({
         firstName,
         lastName,
         email,
         password,
+        role,
       });
       
       res.status(HttpStatusCodes.CREATED).json({ user });
@@ -27,7 +28,7 @@ class AuthController {
     }
   }
 
-  public async login(req: Request, res: Response, next: NextFunction) {
+  public async login(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const { email, password } = req.body;
       const { user, token } = await this.authService.login({ email, password });
@@ -41,7 +42,7 @@ class AuthController {
     }
   }
 
-  public async getProfile(req: AuthenticatedRequest, res: Response, next: NextFunction) {
+  public async getProfile(req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> {
     try {
       const userId = req.user!.id;
       const user = await this.authService.getById(userId);

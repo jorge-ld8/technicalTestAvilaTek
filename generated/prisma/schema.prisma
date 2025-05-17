@@ -23,14 +23,14 @@ model User {
 }
 
 model Product {
-  id                String         @id @default(uuid())
-  name              String
-  description       String?
-  price             Decimal        @db.Decimal(10, 2)
-  stockAvailability Int            @default(0) @map("stock_availability")
-  createdAt         DateTime       @default(now())
-  updatedAt         DateTime       @updatedAt
-  orderProducts     OrderProduct[]
+  id            String         @id @default(uuid())
+  name          String
+  description   String?
+  price         Decimal        @db.Decimal(10, 2)
+  stock         Int            @default(0) @map("stock")
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  orderProducts OrderProduct[]
 
   @@map("products")
 }
