@@ -1,10 +1,16 @@
-import { RequestHandler, Router } from 'express';
-import OrderController from '@src/controllers/OrderController';
+import { RequestHandler } from 'express';
 import { validateRequest } from '@src/middlewares/validateRequest';
-import { createOrderSchema } from '@src/validators/order.validator';
-import { authorize } from '@src/middlewares/authorizeMiddleware';
-import { UserRole } from '@src/types/auth.types';
+import { authenticate } from '@src/middlewares/authMiddleware';
+import { authorize } from '@src/middlewares/authMiddleware';
 import { BaseRouter } from './common/BaseRouter';
+import { 
+  createOrderSchema, 
+  getOrderByIdSchema, 
+  listOrdersSchema, 
+  updateOrderStatusSchema,
+} from '@src/validators/order.validator';
+import OrderController from '@src/controllers/OrderController';
+import { UserRole } from '@src/types/auth.d';
 
 class OrderRouter extends BaseRouter<OrderController> {
   constructor() {
@@ -12,26 +18,29 @@ class OrderRouter extends BaseRouter<OrderController> {
   }
 
   protected setupRoutes(): void {
-    // Create a new order - any authenticated user can do this
+    // All order routes require authentication
+    this.router.use(authenticate);
+
     this.router.post('/', 
       validateRequest(createOrderSchema) as RequestHandler,
       (req, res, next) => this.controller.createOrder(req, res, next));
     
-    // Get user's own orders - any authenticated user
-    this.router.get('/my-orders', 
+    this.router.get('/me', 
+      validateRequest(listOrdersSchema) as RequestHandler,
       (req, res, next) => this.controller.getMyOrders(req, res, next));
     
-    // Get order by ID - user can only access their own orders
     this.router.get('/:id', 
+      validateRequest(getOrderByIdSchema) as RequestHandler,
       (req, res, next) => this.controller.getOrderById(req, res, next));
     
-    // Admin routes - manage all orders
     this.router.get('/', 
       authorize([UserRole.ADMIN]),
+      validateRequest(listOrdersSchema) as RequestHandler,
       (req, res, next) => this.controller.getAllOrders(req, res, next));
     
-    this.router.put('/:id/status', 
+    this.router.patch('/:id/status', 
       authorize([UserRole.ADMIN]),
+      validateRequest(updateOrderStatusSchema) as RequestHandler,
       (req, res, next) => this.controller.updateOrderStatus(req, res, next));
   }
 }

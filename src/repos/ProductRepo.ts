@@ -3,17 +3,8 @@ import { Decimal } from '@prisma/client/runtime/library';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 import { UpdateProductDto } from '@src/types/products';
 import { CreateProductDto } from '@src/types/products';
+import { IProduct } from '@src/models/Product';
 
-// Define the IProduct interface to mirror the Product model
-export interface IProduct {
-  id: string;
-  name: string;
-  description: string | null;
-  price: number;
-  stock: number;
-  createdAt?: Date;
-  updatedAt?: Date;
-}
 
 // Helper function to convert Prisma Product to IProduct
 function mapPrismaProductToIProduct(product: Product): IProduct {

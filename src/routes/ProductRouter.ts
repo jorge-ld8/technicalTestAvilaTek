@@ -1,7 +1,6 @@
 import { RequestHandler, Router } from 'express';
 import ProductController from '@src/controllers/ProductController';
 import { validateRequest } from '@src/middlewares/validateRequest';
-
 import { authenticate } from '@src/middlewares/authMiddleware';
 import { authorize } from '@src/middlewares/authMiddleware';
 import { UserRole } from '@src/types/auth.d';
@@ -21,7 +20,7 @@ class ProductRouter extends BaseRouter<ProductController> {
   }
 
   protected setupRoutes(): void {
-    // Public routes - anyone can view products
+    // Public routes 
     this.router.get('/', 
       (req, res, next) => this.controller.getAllProducts(req, res, next));
     
@@ -36,6 +35,7 @@ class ProductRouter extends BaseRouter<ProductController> {
     this.router.get('/:id', 
       (req, res, next) => this.controller.getProductById(req, res, next));
     
+    //  protected routes
     this.router.post('/', 
       authenticate,
       authorize([UserRole.ADMIN]),
