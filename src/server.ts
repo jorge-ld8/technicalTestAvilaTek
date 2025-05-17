@@ -26,7 +26,6 @@ if (ENV.NodeEnv === NodeEnvs.Production) {
   }
 }
 
-// Add all API routes through the unified router
 app.use(Paths.Base, apiRouter);
 
 // Health check endpoint

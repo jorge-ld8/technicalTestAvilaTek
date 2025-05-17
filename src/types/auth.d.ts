@@ -1,12 +1,9 @@
 import { Request } from 'express';
 
-// Define the structure of your user object that will be attached to the request
-// This often matches the payload of your JWT
 export interface AuthenticatedUser {
-  id: string; // Or number, depending on your User model's ID type
+  id: string; 
   email: string;
-  // Add any other properties you include in your JWT payload and want to access
-  // For example: roles?: string[];
+  role: UserRole;
 }
 
 export interface AuthenticatedRequest extends Request {
@@ -18,6 +15,7 @@ export interface RegisterUserDto {
   lastName: string;
   email: string;
   password: string;
+  role?: UserRole;
 }
 
 export interface RegisterResponse {
@@ -33,4 +31,21 @@ export interface LoginResponse {
   user: IUser;
   token: string;
 }
+export enum UserRole {
+    CLIENT = 'CLIENT',
+    ADMIN = 'ADMIN'
+  }
+  
+export interface JwtPayload {
+    userId: string;
+    email: string;
+    role: UserRole;
+  }
+  
+export interface AuthUser {
+    id: string;
+    email: string;
+    role: UserRole;
+  }
+  
 

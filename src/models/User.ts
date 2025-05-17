@@ -1,3 +1,4 @@
+import { UserRole } from '@src/types/auth';
 import { isString } from 'jet-validators';
 import { parseObject, TParseOnError } from 'jet-validators/utils';
 
@@ -34,6 +35,7 @@ export interface IUser {
   lastName: string;
   email: string;
   password?: string;
+  role?: UserRole;
 }
 
 

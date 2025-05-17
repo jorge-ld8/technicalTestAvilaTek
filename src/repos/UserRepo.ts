@@ -1,6 +1,6 @@
 import { IUser } from '@src/models/User';
 import prisma, { User } from '@src/common/prisma';
-import { RegisterUserDto } from '@src/types/auth';
+import { RegisterUserDto, UserRole } from '@src/types/auth';
 
 
 function mapPrismaUserToIUser(user: User): IUser {
@@ -10,6 +10,7 @@ function mapPrismaUserToIUser(user: User): IUser {
     lastName: user.lastName,
     email: user.email,
     password: user.password,
+    role: user.role as UserRole,
   };
 }
 
@@ -76,10 +77,10 @@ class UserRepo {
             password: user.password ?? '',
             createdAt: new Date(),
           },
-        })
-      )
+        }),
+      ),
     );
-    return createdUsers;
+    return createdUsers.map(mapPrismaUserToIUser);
   }
 }
 

@@ -8,7 +8,7 @@ import
 { AuthenticationError, 
   ConflictError, 
   InternalServerError, 
-  NotFoundError 
+  NotFoundError, 
 } from '@src/common/errors';
 
 class AuthService {
@@ -62,13 +62,18 @@ class AuthService {
 
   private ensureJwtSecret(): void {
     if (!ENV.JwtSecret) {
-      console.error("FATAL ERROR: JWT_SECRET is not defined");
-      throw new InternalServerError("Authentication configuration error");
+      console.error('FATAL ERROR: JWT_SECRET is not defined');
+      throw new InternalServerError('Authentication configuration error');
     }
   }
 
   public async getOne(email: string): Promise<IUser | null> {
-    return await this.userRepo.getOne(email);
+    const user = await this.userRepo.getOne(email);
+    if (!user) {
+      throw new NotFoundError('User not found');
+    }
+    const { password: _, ...userWithoutPassword } = user;
+    return userWithoutPassword;
   }
 
   public async getById(id: string): Promise<IUser | null> {
@@ -76,7 +81,8 @@ class AuthService {
     if (!user) {
       throw new NotFoundError('User not found');
     }
-    return user;
+    const { password: _, ...userWithoutPassword } = user;
+    return userWithoutPassword;
   }
 }
 
