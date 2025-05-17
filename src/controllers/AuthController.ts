@@ -48,7 +48,6 @@ class AuthController {
         user: userWithoutPassword,
       });
     } catch (error) {
-      console.error('Registration error:', error);
       next(error);
     }
   }
@@ -93,42 +92,40 @@ class AuthController {
         user: userWithoutPassword,
       });
     } catch (error) {
-      console.error('Login error:', error);
       next(error);
     }
   }
 
-  // public async getProfile(req: AuthenticatedRequest, res: Response, next: NextFunction) {
-  //   try {
-  //     // The user ID should be available from the authenticated request
-  //     const userId = req.user?.id;
+  public async getProfile(req: AuthenticatedRequest, res: Response, next: NextFunction) {
+    try {
+      const userId = req.user!.id;
   
-  //     if (!userId) {
-  //       res.status(HttpStatusCodes.UNAUTHORIZED).json({
-  //         message: 'Not authenticated',
-  //       });
-  //     }
+      if (!userId) {
+        res.status(HttpStatusCodes.UNAUTHORIZED).json({
+          message: 'Not authenticated',
+        });
+      }
   
-  //     const user = await prisma.user.findUnique({
-  //       where: { id: userId },
-  //     });
+      const user = await prisma.user.findUnique({
+        where: { id: userId },
+      });
   
-  //     if (!user) {
-  //       res.status(HttpStatusCodes.NOT_FOUND).json({
-  //         message: 'User not found',
-  //       });
-  //     }
+      if (!user) {
+        res.status(HttpStatusCodes.NOT_FOUND).json({
+          message: 'User not found',
+        });
+      }
   
-  //     // Remove password from response
-  //     const { password: _, ...userWithoutPassword } = user;
+      // Remove password from response
+      const { password: _, ...userWithoutPassword } = user!;
   
-  //     res.status(HttpStatusCodes.OK).json({
-  //       user: userWithoutPassword,
-  //     });
-  //   } catch (error: unknown) {
-  //     next(error);
-  //   }
-  // }
+      res.status(HttpStatusCodes.OK).json({
+        user: userWithoutPassword,
+      });
+    } catch (error: unknown) {
+      next(error);
+    }
+  }
 }
 
 export default AuthController;
