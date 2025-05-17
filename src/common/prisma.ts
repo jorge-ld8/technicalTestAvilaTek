@@ -1,22 +1,23 @@
 /* eslint-disable */
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient } from '../../generated/prisma/edge';
 import ENV from './constants/ENV';
 import { NodeEnvs } from './constants';
+import { withAccelerate } from '@prisma/extension-accelerate';
+
 // 
 declare global {
-  var prisma: PrismaClient | undefined;
+  var prisma: PrismaClient | undefined | any;
 }
 
-let prismaInstance: PrismaClient;
+let prismaInstance;
 
 if (ENV.NodeEnv === NodeEnvs.Production) {
-  prismaInstance = new PrismaClient();
+  prismaInstance = new PrismaClient().$extends(withAccelerate());
 } else {
   if (!global.prisma) {
-    global.prisma = new PrismaClient({
-    });
+    global.prisma = new PrismaClient({}).$extends(withAccelerate());
   }
   prismaInstance = global.prisma;
 }
 
-export default prismaInstance;
+export default prismaInstance as PrismaClient;

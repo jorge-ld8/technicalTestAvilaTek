@@ -11,17 +11,15 @@ import ENV from '@src/common/constants/ENV';
 import HttpStatusCodes from '@src/common/constants/HttpStatusCodes';
 import { RouteError } from '@src/common/util/route-errors';
 import { NodeEnvs } from '@src/common/constants';
-
+import prismaInstance from './common/prisma';
+import { User } from '../generated/prisma/edge';
+import AuthRouter from './routes/AuthRouter';
 
 /******************************************************************************
                                 Setup
 ******************************************************************************/
 
 const app = express();
-
-
-// **** Middleware **** //
-
 // Basic middleware
 app.use(express.json());
 app.use(express.urlencoded({extended: true}));
@@ -55,30 +53,40 @@ app.use((err: Error, _: Request, res: Response, next: NextFunction) => {
   return next(err);
 });
 
+// app.get('/', (_: Request, res: Response) => {
+//   res.status(200).send('Hello World');
+// });
 
-// **** FrontEnd Content **** //
+// app.get('/users', async (_, res: Response) => {
+//   const users: User[] = await prismaInstance.user.findMany();
+//   res.json(users);
+// });
 
-// Set views directory (html)
-const viewsDir = path.join(__dirname, 'views');
-app.set('views', viewsDir);
+// app.post('/users', async (req: Request, res: Response) => {
+//   const { firstName, lastName, email, password } = req.body;
+//   const user: User = await prismaInstance.user.create({
+//     data: { firstName, lastName, email, password },
+//   });
+//   res.json(user);
+// });
 
-// Set static directory (js and css).
-const staticDir = path.join(__dirname, 'public');
-app.use(express.static(staticDir));
+// app.get('/users/:id', async (req: Request, res: Response) => {
+//   console.log('got into /users/:id');
+//   const { id } = req.params;
+//   const user = await prismaInstance.user.findUnique({
+//     where: { id },
+//   });
+//   res.json(user);
+// });
 
-// Nav to users pg by default
-app.get('/', (_: Request, res: Response) => {
-  return res.redirect('/users');
-});
+// app.delete('/users/:id', async (req: Request, res: Response) => {
+//   const { id } = req.params;
+//   const user = await prismaInstance.user.delete({
+//     where: { id },
+//   });
+//   res.json(user);
+// });
 
-// Redirect to login if not logged in.
-app.get('/users', (_: Request, res: Response) => {
-  return res.sendFile('users.html', { root: viewsDir });
-});
-
-
-/******************************************************************************
-                                Export default
-******************************************************************************/
+app.use('/auth', AuthRouter);
 
 export default app;
