@@ -1,24 +1,13 @@
 import morgan from 'morgan';
-import path from 'path';
 import helmet from 'helmet';
-import express, { Request, Response, NextFunction } from 'express';
-import logger from 'jet-logger';
-
+import express, { Request, Response } from 'express';
 import BaseRouter from '@src/routes';
-
 import Paths from '@src/common/constants/Paths';
 import ENV from '@src/common/constants/ENV';
 import HttpStatusCodes from '@src/common/constants/HttpStatusCodes';
-import { RouteError } from '@src/common/util/route-errors';
 import { NodeEnvs } from '@src/common/constants';
-import prismaInstance from './common/prisma';
-import { User } from '../generated/prisma/edge';
 import AuthRouter from './routes/AuthRouter';
 import { errorHandler } from './middlewares/errorHandler';
-
-/******************************************************************************
-                                Setup
-******************************************************************************/
 
 const app = express();
 // Basic middleware
