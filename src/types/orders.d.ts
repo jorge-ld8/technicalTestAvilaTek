@@ -37,7 +37,6 @@ export interface UpdateOrderRepoDto {
 // DTOs for order responses
 export interface OrderItemResponseDto {
   id: string;
-  productId: string;
   name: string;
   quantity: number;
   priceAtPurchase: number;
@@ -55,10 +54,3 @@ export interface OrderResponseDto {
 export interface UpdateOrderStatusDto {
   status: OrderStatus;
 }
-
-// Interface for interacting with order items in the repository
-export interface IOrderItemInput {
-  productId: string;
-  quantity: number;
-  priceAtPurchase: number;
-} 

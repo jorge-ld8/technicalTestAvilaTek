@@ -162,7 +162,6 @@ class OrderService {
       totalAmount: order.totalAmount,
       items: order.orderProducts.map(item => ({
         id: item.id,
-        productId: item.productId,
         name: item.product?.name ?? 'Unknown Product',
         quantity: item.quantity,
         priceAtPurchase: item.priceAtPurchase,
