@@ -13,10 +13,14 @@ declare global {
 let prismaInstance;
 
 if (ENV.NodeEnv === NodeEnvs.Production) {
-  prismaInstance = new PrismaClient().$extends(withAccelerate());
+  prismaInstance = new PrismaClient({
+    datasourceUrl: ENV.DatabaseUrl,
+  }).$extends(withAccelerate());
 } else {
   if (!global.prisma) {
-    global.prisma = new PrismaClient({}).$extends(withAccelerate());
+    global.prisma = new PrismaClient({
+      datasourceUrl: ENV.DatabaseUrl,
+    }).$extends(withAccelerate());
   }
   prismaInstance = global.prisma;
 }

@@ -7,6 +7,7 @@ const ENV = jetEnv({
   Port: num,
   JwtSecret: str,
   RabbitmqUrl: str,
+  DatabaseUrl: str,
 });
 
 

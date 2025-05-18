@@ -29,7 +29,8 @@ Follow these steps to get the project up and running on your local machine:
     Create a `.env` file in the root of the project by copying the example file:
 
     ```bash
-    cp .env.example .env
+    mkdir ./config
+    cp .env.example ./config/.env.development
     ```
 
     Update the `.env` file with your specific configurations.
