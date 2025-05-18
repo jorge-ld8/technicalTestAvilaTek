@@ -90,6 +90,6 @@ Se creo un sistema de manejo de errores que:
 
 - **Endpoints optimizados**: Separación de endpoints con alta carga de tráfico
 - **Paralelización con Promise.all**: Uso de Promise.all para ejecutar operaciones asíncronas en paralelo en lugar de awaits secuenciales, mejorando significativamente el rendimiento cuando se necesitan múltiples recursos independientes.
-- **Compresión de respuestas**: Reducción del tamaño de respuesta para mejorar tiempos de carga
+- **Base de datos hosteada en Prisma Postgres integrado con Accelerate**: este contiene un cache global con pooling built-in. Diseñado para la facilidad de uso y escalabilidad.
 - **Procesamiento asincrónico**: Operaciones intensivas desplazadas fuera del event loop.
 - **Transacciones eficientes**: Uso de transacciones de base de datos para operaciones complejas.
