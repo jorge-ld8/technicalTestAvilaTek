@@ -20,7 +20,7 @@ class AuthService {
     return await this.userRepo.getAll(pagination);
   }
 
-  public async register(registerUserDto: RegisterUserDto): Promise<RegisterResponse> {
+  public async register(registerUserDto: RegisterUserDto): Promise<IUser> {
 
     const existingUser = await this.userRepo.getOne(registerUserDto.email);
 
@@ -35,7 +35,7 @@ class AuthService {
 
     const user = await this.userRepo.create(registerUserDto);
     const { password: _, ...userWithoutPassword } = user;
-    return { user: userWithoutPassword };
+    return { ...userWithoutPassword };
   }
 
   public async login(loginUserDto: LoginUserDto): Promise<LoginResponse> {

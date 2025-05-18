@@ -12,14 +12,13 @@ class AuthController {
 
   public async register(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-      const { firstName, lastName, email, password, role  } = req.body;
+      const { firstName, lastName, email, password } = req.body;
 
       const user = await this.authService.register({
         firstName,
         lastName,
         email,
         password,
-        role,
       });
       
       res.status(HttpStatusCodes.CREATED).json({ user });

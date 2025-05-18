@@ -62,7 +62,7 @@ class UserRepo implements IBaseRepository<IUser, RegisterUserDto, UpdateUserDto>
         lastName: data.lastName,
         email: data.email,
         password: data.password ?? '',
-        role: data.role ?? UserRole.CLIENT,
+        role: UserRole.CLIENT,
       },
     });
     return mapPrismaUserToIUser(user);
@@ -77,7 +77,6 @@ class UserRepo implements IBaseRepository<IUser, RegisterUserDto, UpdateUserDto>
           ...(data.lastName !== undefined && { lastName: data.lastName }),
           ...(data.email !== undefined && { email: data.email }),
           ...(data.password !== undefined && { password: data.password }),
-          ...(data.role !== undefined && { role: data.role }),
         },
       });
       return mapPrismaUserToIUser(user);
@@ -116,7 +115,7 @@ class UserRepo implements IBaseRepository<IUser, RegisterUserDto, UpdateUserDto>
             lastName: data.lastName,
             email: data.email,
             password: data.password ?? '',
-            role: data.role ?? UserRole.CLIENT,
+            role: UserRole.CLIENT,
           },
         }),
       ),

@@ -16,7 +16,6 @@ export interface RegisterUserDto {
   lastName: string;
   email: string;
   password: string;
-  role?: UserRole;
 }
 
 export interface UpdateUserDto {
@@ -24,7 +23,6 @@ export interface UpdateUserDto {
   lastName?: string;
   email?: string;
   password?: string;
-  role?: UserRole;
 }
 
 export interface RegisterResponse {
