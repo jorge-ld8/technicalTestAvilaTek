@@ -7,6 +7,7 @@ import ENV from '@src/common/constants/ENV';
 import HttpStatusCodes from '@src/common/constants/HttpStatusCodes';
 import { NodeEnvs } from '@src/common/constants';
 import { errorHandler } from './middlewares/errorHandler';
+import { setupSwagger } from './common/swagger';
 
 const app = express();
 // Basic middleware
@@ -25,6 +26,9 @@ if (ENV.NodeEnv === NodeEnvs.Production) {
     app.use(helmet());
   }
 }
+
+// Setup Swagger
+setupSwagger(app);
 
 app.use(Paths.Base, apiRouter);
 

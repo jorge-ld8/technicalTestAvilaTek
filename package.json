@@ -35,6 +35,8 @@
     "jsonwebtoken": "^9.0.2",
     "module-alias": "^2.2.3",
     "morgan": "^1.10.0",
+    "swagger-jsdoc": "^6.2.8",
+    "swagger-ui-express": "^5.0.1",
     "zod": "^3.24.4"
   },
   "devDependencies": {
@@ -53,6 +55,8 @@
     "@types/morgan": "^1.9.9",
     "@types/node": "^22.15.18",
     "@types/supertest": "^6.0.3",
+    "@types/swagger-jsdoc": "^6.0.4",
+    "@types/swagger-ui-express": "^4.1.8",
     "eslint": "^9.27.0",
     "eslint-plugin-n": "^17.18.0",
     "find": "^0.3.0",
