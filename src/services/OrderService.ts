@@ -10,10 +10,12 @@ import { UserRole } from '@src/types/auth.d';
 import { PaginatedResult, PaginationParams } from '@src/types/common';
 import { IOrder } from '@src/models/Order';
 import ProductService from './ProductService';
+import MessageQueueService, { QueueName } from './MessageQueueService';
 
 class OrderService {
   private orderRepo = new OrderRepo();
   private productService = new ProductService();
+  private messageQueue = MessageQueueService.getInstance();
 
   public async createOrder(userId: string, orderData: CreateOrderDto): Promise<OrderResponseDto> {
     if (!orderData.items || orderData.items.length === 0) {
@@ -57,6 +59,14 @@ class OrderService {
       const product = await this.productService.getById(item.productId);
       const newStock = product.stock - item.quantity;
       await this.productService.updateStock(item.productId, newStock);
+    }));
+
+    // Publish order created event to message queue for async processing
+    await this.messageQueue.publishMessage(QueueName.ORDER_CREATED, JSON.stringify({
+      orderId: order.id,
+      userId,
+      items: orderData.items,
+      timestamp: new Date().toISOString(),
     }));
 
     return this.mapOrderToResponseDto(order);
@@ -132,6 +142,14 @@ class OrderService {
         await this.productService.updateStock(item.productId, newStock);
       }));
     }
+
+    // Publish status change event to message queue for async processing
+    await this.messageQueue.publishMessage(QueueName.ORDER_STATUS_CHANGED, JSON.stringify({
+      orderId,
+      oldStatus: originalOrder.orderStatus,
+      newStatus: status,
+      timestamp: new Date().toISOString(),
+    }));
 
     return this.mapOrderToResponseDto(updatedOrder);
   }
