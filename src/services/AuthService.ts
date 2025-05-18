@@ -1,7 +1,7 @@
 import ENV from '@src/common/constants/ENV';
 import { IUser } from '@src/models/User';
 import UserRepo from '@src/repos/UserRepo';
-import { LoginResponse, LoginUserDto, RegisterResponse, RegisterUserDto } from '@src/types/auth';
+import { LoginResponse, LoginUserDto, RegisterUserDto } from '@src/types/auth';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import {
