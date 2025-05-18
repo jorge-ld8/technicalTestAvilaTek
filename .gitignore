@@ -3,6 +3,11 @@ dist/
 temp/
 **/**/*.log
 config/
-.env*
 .cursor
 *.txt
+.env.development
+.env.production
+.env.staging
+.env.test
+.env.local
+.env

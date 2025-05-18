@@ -1,65 +1,92 @@
-## About
+## Avila Tek Prueba Tecnica Backend - E-commerce API
 
-This project was created with [express-generator-typescript](https://github.com/seanpmaxwell/express-generator-typescript).
+This project is a robust and scalable REST API for a fictional e-commerce platform, built with Express.js and TypeScript. 
 
-**IMPORTANT** for demo purposes I had to disable `helmet` in production. In any real world app you should change these 3 lines of code in `src/server.ts`:
-```ts
-// eslint-disable-next-line n/no-process-env
-if (!process.env.DISABLE_HELMET) {
-  app.use(helmet());
-}
-```
+## Prerequisites
 
-To just this:
-```ts
-app.use(helmet());
-```
+*   [npm](usually comes with Node.js)
+*   [Docker](for running PostgreSQL and RabbitMQ)
 
+## Getting Started
 
-## Available Scripts
+Follow these steps to get the project up and running on your local machine:
 
-### `npm run clean-install`
+1.  **Clone the Repository**
 
-Remove the existing `node_modules/` folder, `package-lock.json`, and reinstall all library modules.
+    ```bash
+    git clone https://github.com/jorge-ld8/technicalTestAvilaTek.git avilaTek-technicalTest-Jorge-Leon
+    cd avilaTek-technicalTest-Jorge-Leon
+    ```
 
+2.  **Install Dependencies**
 
-### `npm run dev` or `npm run dev:hot` (hot reloading)
+    ```bash
+    npm install
+    ```
 
-Run the server in development mode.<br/>
+3.  **Set Up Environment Variables**
 
-**IMPORTANT** development mode uses `swc` for performance reasons which DOES NOT check for typescript errors. Run `npm run type-check` to check for type errors. NOTE: you should use your IDE to prevent most type errors.
+    Create a `.env` file in the root of the project by copying the example file:
 
+    ```bash
+    cp .env.example .env
+    ```
 
-### `npm test` or `npm run test:hot` (hot reloading)
+    Update the `.env` file with your specific configurations.
 
-Run all unit-tests.
+4.  **Set Up Docker Container for RabbitMQ (RabbitMQ)**
 
+    Run the containers:
 
-### `npm test -- "name of test file" (i.e. users).`
+    ```bash
+    docker-compose up -d
+    ```
 
-Run a single unit-test.
+    *   **RabbitMQ**: Access the management UI on `http://localhost:15672`.
 
+5.  **Database Migrations**
 
-### `npm run lint`
+    Apply the database schema using Prisma migrations:
 
-Check for linting errors.
+    ```bash
+    npx prisma migrate dev --name init 
+    ```
+    This command will also generate the Prisma Client based on your schema.
+    If you make changes to the `schema.prisma` file, run `npx prisma generate` to update the client.
 
+6.  **Run the Application (Development Mode)**
 
-### `npm run build`
+    ```bash
+    npm run dev
+    ```
+    Or for hot-reloading:
+    ```bash
+    npm run dev:hot
+    ```
+    The server will start, typically on `http://localhost:3000` (or the port you configured).
+    The API documentation (Swagger) will be available at `http://localhost:3000/api-docs`.
 
-Build the project for production.
+    **IMPORTANT**: Development mode uses `swc` for performance, which **does not** perform type checking. Run `npm run type-check` to check for TypeScript errors. Your IDE should also help catch these.
 
+7.  **Start the Order Worker**
 
-### `npm start`
+    In a separate terminal, start the order worker to process background tasks:
 
-Run the production build (Must be built first).
+    ```bash
+    npm run start:worker
+    ```
+    *(You might need to add this script to your `package.json` if it doesn't exist)*
 
+    **Example `start:worker` script in `package.json`:**
+    ```json
+    "scripts": {
+      // ... other scripts
+      "start:worker": "ts-node src/workers/index.ts"
+    }
+    ```
+## API Documentation
 
-### `npm run type-check`
+Once the server is running, you can access the Swagger API documentation at:
+`http://localhost:<PORT>/api-docs` (e.g., `http://localhost:3000/api-docs`)
 
-Check for typescript errors.
-
-
-## Additional Notes
-
-- If `npm run dev` gives you issues with bcrypt on MacOS you may need to run: `npm rebuild bcrypt --build-from-source`. 
+## Project Structure Overview
