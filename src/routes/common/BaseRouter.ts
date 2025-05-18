@@ -1,6 +1,5 @@
 import { Router } from 'express';
 
-
 export abstract class BaseRouter<T> {
   protected router: Router;
   protected controller: T;
@@ -16,4 +15,4 @@ export abstract class BaseRouter<T> {
   }
 
   protected abstract setupRoutes(): void;
-} 
+}

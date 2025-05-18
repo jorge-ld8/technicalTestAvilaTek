@@ -1,12 +1,17 @@
 import prisma, { Product } from '@src/common/prisma';
-import { Decimal, PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
+import {
+  Decimal,
+  PrismaClientKnownRequestError,
+} from '@prisma/client/runtime/library';
 import { UpdateProductDto, CreateProductDto } from '@src/types/products';
 import { IProduct } from '@src/models/Product';
 import { IBaseRepository } from './BaseRepository';
 import { PaginatedResult, PaginationParams } from '@src/types/common';
-import { createPaginatedResult, normalizePaginationParams } from '@src/common/util/pagination';
+import {
+  createPaginatedResult,
+  normalizePaginationParams,
+} from '@src/common/util/pagination';
 import { Prisma } from '../../generated/prisma/edge';
-
 
 // Helper function to convert Prisma Product to IProduct
 function mapPrismaProductToIProduct(product: Product): IProduct {
@@ -14,15 +19,20 @@ function mapPrismaProductToIProduct(product: Product): IProduct {
     id: product.id,
     name: product.name,
     description: product.description,
-    price: typeof product.price === 'object' && 'toNumber' in product.price 
-      ? (product.price as Decimal).toNumber() 
-      : Number(product.price),
+    price:
+      typeof product.price === 'object' && 'toNumber' in product.price
+        ? (product.price as Decimal).toNumber()
+        : Number(product.price),
     stock: product.stock,
   };
 }
 
-class ProductRepo implements IBaseRepository<IProduct, CreateProductDto, UpdateProductDto> {
-  async getAll(pagination?: PaginationParams): Promise<PaginatedResult<IProduct>> {
+class ProductRepo
+implements IBaseRepository<IProduct, CreateProductDto, UpdateProductDto>
+{
+  async getAll(
+    pagination?: PaginationParams,
+  ): Promise<PaginatedResult<IProduct>> {
     const { page, pageSize } = normalizePaginationParams(pagination);
     const skip = (page - 1) * pageSize;
 
@@ -38,15 +48,16 @@ class ProductRepo implements IBaseRepository<IProduct, CreateProductDto, UpdateP
       }),
     ]);
 
-    return createPaginatedResult(
-      products.map(mapPrismaProductToIProduct),
-      { total: totalCount, currentPage: page, pageSize },
-    );
+    return createPaginatedResult(products.map(mapPrismaProductToIProduct), {
+      total: totalCount,
+      currentPage: page,
+      pageSize,
+    });
   }
 
   async getById(id: string): Promise<IProduct | null> {
     const product = await prisma.product.findFirst({
-      where: { 
+      where: {
         id,
         isDeleted: false,
       },
@@ -69,7 +80,7 @@ class ProductRepo implements IBaseRepository<IProduct, CreateProductDto, UpdateP
 
   async createMany(productDtos: CreateProductDto[]): Promise<IProduct[]> {
     const createdProducts = await prisma.$transaction(
-      productDtos.map(dto => 
+      productDtos.map((dto) =>
         prisma.product.create({
           data: {
             name: dto.name,
@@ -78,10 +89,10 @@ class ProductRepo implements IBaseRepository<IProduct, CreateProductDto, UpdateP
             stock: dto.stock,
             isDeleted: false,
           },
-        })
-      )
+        }),
+      ),
     );
-    
+
     return createdProducts.map(mapPrismaProductToIProduct);
   }
 
@@ -91,23 +102,30 @@ class ProductRepo implements IBaseRepository<IProduct, CreateProductDto, UpdateP
         where: { id },
         data: {
           ...(data.name !== undefined && { name: data.name }),
-          ...(data.description !== undefined && { description: data.description }),
+          ...(data.description !== undefined && {
+            description: data.description,
+          }),
           ...(data.price !== undefined && { price: data.price }),
           ...(data.stock !== undefined && { stock: data.stock }),
         },
       });
       return mapPrismaProductToIProduct(product);
     } catch (error) {
-      if (error instanceof PrismaClientKnownRequestError && error.code === 'P2025') {
+      if (
+        error instanceof PrismaClientKnownRequestError &&
+        error.code === 'P2025'
+      ) {
         return null;
       }
       throw error;
     }
   }
 
-  async updateMany(productsToUpdate: { id: string, data: UpdateProductDto }[]): Promise<IProduct[]> {
+  async updateMany(
+    productsToUpdate: { id: string, data: UpdateProductDto }[],
+  ): Promise<IProduct[]> {
     const updatedProducts: IProduct[] = [];
-    
+
     await prisma.$transaction(async (tx) => {
       for (const { id, data } of productsToUpdate) {
         try {
@@ -115,20 +133,27 @@ class ProductRepo implements IBaseRepository<IProduct, CreateProductDto, UpdateP
             where: { id },
             data: {
               ...(data.name !== undefined && { name: data.name }),
-              ...(data.description !== undefined && { description: data.description }),
+              ...(data.description !== undefined && {
+                description: data.description,
+              }),
               ...(data.price !== undefined && { price: data.price }),
               ...(data.stock !== undefined && { stock: data.stock }),
             },
           });
           updatedProducts.push(mapPrismaProductToIProduct(product));
         } catch (error) {
-          if (!(error instanceof PrismaClientKnownRequestError && error.code === 'P2025')) {
+          if (
+            !(
+              error instanceof PrismaClientKnownRequestError &&
+              error.code === 'P2025'
+            )
+          ) {
             throw error;
           }
         }
       }
     });
-    
+
     return updatedProducts;
   }
 
@@ -140,19 +165,24 @@ class ProductRepo implements IBaseRepository<IProduct, CreateProductDto, UpdateP
       });
       return true;
     } catch (error) {
-      if (error instanceof PrismaClientKnownRequestError && error.code === 'P2025') {
+      if (
+        error instanceof PrismaClientKnownRequestError &&
+        error.code === 'P2025'
+      ) {
         return false;
       }
       throw error;
     }
   }
 
-  async deleteMany(ids: string[]): Promise<{ deleted: string[], notFound: string[] }> {
+  async deleteMany(
+    ids: string[],
+  ): Promise<{ deleted: string[], notFound: string[] }> {
     const results = {
       deleted: [] as string[],
       notFound: [] as string[],
     };
-    
+
     await prisma.$transaction(async (tx) => {
       for (const id of ids) {
         try {
@@ -162,7 +192,10 @@ class ProductRepo implements IBaseRepository<IProduct, CreateProductDto, UpdateP
           });
           results.deleted.push(id);
         } catch (error) {
-          if (error instanceof PrismaClientKnownRequestError && error.code === 'P2025') {
+          if (
+            error instanceof PrismaClientKnownRequestError &&
+            error.code === 'P2025'
+          ) {
             results.notFound.push(id);
           } else {
             throw error;
@@ -170,12 +203,14 @@ class ProductRepo implements IBaseRepository<IProduct, CreateProductDto, UpdateP
         }
       }
     });
-    
+
     return results;
   }
 
-  async getInStock(minStock = 1, pagination?: PaginationParams): 
-  Promise<PaginatedResult<IProduct>> {
+  async getInStock(
+    minStock = 1,
+    pagination?: PaginationParams,
+  ): Promise<PaginatedResult<IProduct>> {
     const { page, pageSize } = normalizePaginationParams(pagination);
     const skip = (page - 1) * pageSize;
 
@@ -201,10 +236,11 @@ class ProductRepo implements IBaseRepository<IProduct, CreateProductDto, UpdateP
       }),
     ]);
 
-    return createPaginatedResult(
-      products.map(mapPrismaProductToIProduct),
-      { total: totalCount, currentPage: page, pageSize },
-    );
+    return createPaginatedResult(products.map(mapPrismaProductToIProduct), {
+      total: totalCount,
+      currentPage: page,
+      pageSize,
+    });
   }
 
   async updateStock(id: string, newStock: number): Promise<IProduct | null> {
@@ -217,7 +253,10 @@ class ProductRepo implements IBaseRepository<IProduct, CreateProductDto, UpdateP
     return mapPrismaProductToIProduct(product);
   }
 
-  async search(query: string, pagination?: PaginationParams): Promise<PaginatedResult<IProduct>> {
+  async search(
+    query: string,
+    pagination?: PaginationParams,
+  ): Promise<PaginatedResult<IProduct>> {
     const { page, pageSize } = normalizePaginationParams(pagination);
     const skip = (page - 1) * pageSize;
 
@@ -251,10 +290,11 @@ class ProductRepo implements IBaseRepository<IProduct, CreateProductDto, UpdateP
       }),
     ]);
 
-    return createPaginatedResult(
-      products.map(mapPrismaProductToIProduct),
-      { total: totalCount, currentPage: page, pageSize },
-    );
+    return createPaginatedResult(products.map(mapPrismaProductToIProduct), {
+      total: totalCount,
+      currentPage: page,
+      pageSize,
+    });
   }
 }
 

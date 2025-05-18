@@ -1,11 +1,16 @@
 /* eslint-disable */
-import { PrismaClient } from '../../generated/prisma/edge';
-import ENV from './constants/ENV';
-import { NodeEnvs } from './constants';
-import { withAccelerate } from '@prisma/extension-accelerate';
-import type { User, Order, Product, OrderProduct } from '../../generated/prisma/edge';
+import { PrismaClient } from "../../generated/prisma/edge";
+import ENV from "./constants/ENV";
+import { NodeEnvs } from "./constants";
+import { withAccelerate } from "@prisma/extension-accelerate";
+import type {
+  User,
+  Order,
+  Product,
+  OrderProduct,
+} from "../../generated/prisma/edge";
 
-// 
+//
 declare global {
   var prisma: PrismaClient | undefined | any;
 }

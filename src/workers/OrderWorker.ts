@@ -1,4 +1,6 @@
-import MessageQueueService, { QueueName } from '@src/services/MessageQueueService';
+import MessageQueueService, {
+  QueueName,
+} from '@src/services/MessageQueueService';
 import ProductService from '@src/services/ProductService';
 import OrderRepo from '@src/repos/OrderRepo';
 import { OrderStatus } from '@src/types/orders.d';
@@ -13,7 +15,7 @@ interface OrderCreatedMessage {
   }[];
   timestamp: string;
 }
-  
+
 interface OrderStatusChangedMessage {
   orderId: string;
   oldStatus: OrderStatus;
@@ -47,7 +49,7 @@ class OrderWorker {
         const message = JSON.parse(messageStr) as OrderCreatedMessage;
         console.log(`Processing new order: ${message.orderId}`);
         await this.processNewOrder(message);
-      }
+      },
     );
 
     // Handle order status changes
@@ -55,11 +57,12 @@ class OrderWorker {
       QueueName.ORDER_STATUS_CHANGED,
       async (messageStr) => {
         // Parse the JSON string into an object
-        const message : OrderStatusChangedMessage = JSON.parse(messageStr);
+        const message: OrderStatusChangedMessage = JSON.parse(messageStr);
         console.log(
-            `Processing order status change: ${message.orderId} from ${message.oldStatus} to ${message.newStatus}`);
+          `Processing order status change: ${message.orderId} from ${message.oldStatus} to ${message.newStatus}`,
+        );
         await this.processStatusChange(message);
-      }
+      },
     );
 
     console.log('Order Worker ready and listening for messages');
@@ -70,69 +73,83 @@ class OrderWorker {
 
     try {
       // Update inventory (decrement stock)
-      await Promise.all(items.map(async (item) => {
-        const product = await this.productService.getById(item.productId);
-        const newStock = product.stock - item.quantity;
-        await this.productService.updateStock(item.productId, newStock);
-        
-        // Publish inventory update event
-        const inventoryMessage: InventoryUpdateMessage = {
-          productId: item.productId,
-          oldStock: product.stock,
-          newStock,
-          reason: 'order_created',
-          orderId,
-          timestamp: new Date().toISOString()
-        };
-        
-        await this.messageQueue.publishMessage(
-          QueueName.INVENTORY_UPDATE, 
-          JSON.stringify(inventoryMessage)
-        );
-      }));
-      console.log(`Successfully processed new order: ${orderId}`);
-    } catch (error) {
-      console.error(`Error processing new order ${orderId}:`, error);
-      await this.orderRepo.update(orderId, { orderStatus: OrderStatus.CANCELLED });
-    }
-  }
-
-  private async processStatusChange(message: OrderStatusChangedMessage): Promise<void> {
-    const { orderId, oldStatus, newStatus } = message;
-
-    try {
-      // If order is cancelled, restore inventory
-      if (newStatus === OrderStatus.CANCELLED && oldStatus !== OrderStatus.CANCELLED) {
-        const order = await this.orderRepo.getById(orderId);
-        if (!order) {
-          throw new Error(`Order ${orderId} not found`);
-        }
-
-        await Promise.all(order.orderProducts.map(async (item) => {
+      await Promise.all(
+        items.map(async (item) => {
           const product = await this.productService.getById(item.productId);
-          const newStock = product.stock + item.quantity;
+          const newStock = product.stock - item.quantity;
           await this.productService.updateStock(item.productId, newStock);
-          
+
           // Publish inventory update event
           const inventoryMessage: InventoryUpdateMessage = {
             productId: item.productId,
             oldStock: product.stock,
             newStock,
-            reason: 'order_cancelled',
+            reason: 'order_created',
             orderId,
-            timestamp: new Date().toISOString()
+            timestamp: new Date().toISOString(),
           };
-          
+
           await this.messageQueue.publishMessage(
-            QueueName.INVENTORY_UPDATE, 
+            QueueName.INVENTORY_UPDATE,
             JSON.stringify(inventoryMessage),
           );
-        }));
+        }),
+      );
+      console.log(`Successfully processed new order: ${orderId}`);
+    } catch (error) {
+      console.error(`Error processing new order ${orderId}:`, error);
+      await this.orderRepo.update(orderId, {
+        orderStatus: OrderStatus.CANCELLED,
+      });
+    }
+  }
+
+  private async processStatusChange(
+    message: OrderStatusChangedMessage,
+  ): Promise<void> {
+    const { orderId, oldStatus, newStatus } = message;
+
+    try {
+      // If order is cancelled, restore inventory
+      if (
+        newStatus === OrderStatus.CANCELLED &&
+        oldStatus !== OrderStatus.CANCELLED
+      ) {
+        const order = await this.orderRepo.getById(orderId);
+        if (!order) {
+          throw new Error(`Order ${orderId} not found`);
+        }
+
+        await Promise.all(
+          order.orderProducts.map(async (item) => {
+            const product = await this.productService.getById(item.productId);
+            const newStock = product.stock + item.quantity;
+            await this.productService.updateStock(item.productId, newStock);
+
+            // Publish inventory update event
+            const inventoryMessage: InventoryUpdateMessage = {
+              productId: item.productId,
+              oldStock: product.stock,
+              newStock,
+              reason: 'order_cancelled',
+              orderId,
+              timestamp: new Date().toISOString(),
+            };
+
+            await this.messageQueue.publishMessage(
+              QueueName.INVENTORY_UPDATE,
+              JSON.stringify(inventoryMessage),
+            );
+          }),
+        );
       }
 
       console.log(`Successfully processed status change for order: ${orderId}`);
     } catch (error) {
-      console.error(`Error processing status change for order ${orderId}:`, error);
+      console.error(
+        `Error processing status change for order ${orderId}:`,
+        error,
+      );
     }
   }
 }

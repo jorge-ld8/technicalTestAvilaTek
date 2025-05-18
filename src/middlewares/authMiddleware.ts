@@ -1,6 +1,10 @@
 import { Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
-import { AuthenticatedRequest, AuthenticatedUser, UserRole } from '@src/types/auth.d';
+import {
+  AuthenticatedRequest,
+  AuthenticatedUser,
+  UserRole,
+} from '@src/types/auth.d';
 import { AuthenticationError, ForbiddenError } from '@src/common/errors';
 import ENV from '@src/common/constants/ENV';
 import prismaInstance from '@src/common/prisma';
@@ -19,31 +23,33 @@ export const authenticate = async (
   try {
     // Get token from Authorization header
     const authHeader = req.headers.authorization;
-    
+
     if (!authHeader?.startsWith('Bearer ')) {
       return next(new AuthenticationError('Authentication required'));
     }
-    
+
     const token = authHeader.split(' ')[1];
-    
+
     if (!token) {
       return next(new AuthenticationError('Authentication required'));
     }
-    
+
     // Check if token is blacklisted
     if (isTokenBlacklisted(token)) {
       return next(new AuthenticationError('Token has been invalidated'));
     }
-    
+
     try {
       if (!ENV.JwtSecret) {
         console.error('JWT_SECRET is not defined in the environment');
-        return next(new AuthenticationError('Authentication configuration error'));
+        return next(
+          new AuthenticationError('Authentication configuration error'),
+        );
       }
-      
+
       // Verify token
       const decoded = jwt.verify(token, ENV.JwtSecret) as JwtPayload;
-      
+
       const user = await prismaInstance.user.findUnique({
         where: { id: decoded.id },
         select: {
@@ -54,18 +60,18 @@ export const authenticate = async (
           role: true,
         },
       });
-      
+
       if (!user) {
         return next(new AuthenticationError('User not found'));
       }
-      
+
       // Attach user to request
       req.user = {
         id: user.id,
         email: user.email,
-        role: user.role as UserRole
+        role: user.role as UserRole,
       } as AuthenticatedUser;
-      
+
       next();
     } catch (error) {
       if (error instanceof jwt.JsonWebTokenError) {
@@ -87,9 +93,11 @@ export const authorize = (roles: UserRole[]) => {
 
     // Check if user has one of the required roles
     if (!roles.includes(req.user.role)) {
-      return next(new ForbiddenError('User does not have required permissions'));
+      return next(
+        new ForbiddenError('User does not have required permissions'),
+      );
     }
 
     next();
   };
-}; 
+};

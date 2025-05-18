@@ -4,7 +4,7 @@ export enum OrderStatus {
   PROCESSING = 'PROCESSING',
   SHIPPED = 'SHIPPED',
   DELIVERED = 'DELIVERED',
-  CANCELLED = 'CANCELLED'
+  CANCELLED = 'CANCELLED',
 }
 
 // DTOs for creating orders
@@ -13,10 +13,10 @@ export interface CreateOrderItemDto {
   quantity: number;
 }
 
-export interface CreateOrderProductDto{
-    productId: string;
-    quantity: number;
-    priceAtPurchase: number;
+export interface CreateOrderProductDto {
+  productId: string;
+  quantity: number;
+  priceAtPurchase: number;
 }
 
 export interface CreateOrderDto {

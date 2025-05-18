@@ -4,11 +4,11 @@ import UserRepo from '@src/repos/UserRepo';
 import { LoginResponse, LoginUserDto, RegisterResponse, RegisterUserDto } from '@src/types/auth';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
-import 
-{ AuthenticationError, 
-  ConflictError, 
-  InternalServerError, 
-  NotFoundError, 
+import {
+  AuthenticationError,
+  ConflictError,
+  InternalServerError,
+  NotFoundError,
 } from '@src/common/errors';
 import { PaginationParams } from '@src/types/common';
 import { PaginatedResult } from '@src/types/common';
@@ -23,7 +23,6 @@ class AuthService {
   }
 
   public async register(registerUserDto: RegisterUserDto): Promise<IUser> {
-
     const existingUser = await this.userRepo.getOne(registerUserDto.email);
 
     if (existingUser) {
@@ -53,12 +52,10 @@ class AuthService {
 
     // Generate JWT token
     this.ensureJwtSecret();
-    
-    const token = jwt.sign(
-      { id: user.id, email: user.email },
-      ENV.JwtSecret,
-      { expiresIn: '1d' },
-    );
+
+    const token = jwt.sign({ id: user.id, email: user.email }, ENV.JwtSecret, {
+      expiresIn: '1d',
+    });
 
     const { password: _, ...userWithoutPassword } = user;
     return { user: userWithoutPassword, token };

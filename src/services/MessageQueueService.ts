@@ -6,7 +6,7 @@ import ENV from '@src/common/constants/ENV';
 export enum QueueName {
   ORDER_CREATED = 'order.created',
   ORDER_STATUS_CHANGED = 'order.status.changed',
-  INVENTORY_UPDATE = 'inventory.update'
+  INVENTORY_UPDATE = 'inventory.update',
 }
 
 class MessageQueueService {
@@ -31,9 +31,15 @@ class MessageQueueService {
       this.channel = await this.connection.createChannel();
 
       // Declare queues to ensure they exist
-      await this.channel.assertQueue(QueueName.ORDER_CREATED, { durable: true });
-      await this.channel.assertQueue(QueueName.ORDER_STATUS_CHANGED, { durable: true });
-      await this.channel.assertQueue(QueueName.INVENTORY_UPDATE, { durable: true });
+      await this.channel.assertQueue(QueueName.ORDER_CREATED, {
+        durable: true,
+      });
+      await this.channel.assertQueue(QueueName.ORDER_STATUS_CHANGED, {
+        durable: true,
+      });
+      await this.channel.assertQueue(QueueName.INVENTORY_UPDATE, {
+        durable: true,
+      });
 
       console.log('RabbitMQ connection established');
     } catch (error) {
@@ -49,9 +55,9 @@ class MessageQueueService {
 
     try {
       return this.channel!.sendToQueue(
-        queue, 
+        queue,
         Buffer.from(message),
-        { persistent: true }  // Ensure message is persisted
+        { persistent: true }, // Ensure message is persisted
       );
     } catch (error) {
       console.error(`Error publishing message to ${queue}`, error);
@@ -59,7 +65,10 @@ class MessageQueueService {
     }
   }
 
-  public async consumeMessages(queue: QueueName, callback: (message: string) => Promise<void>): Promise<void> {
+  public async consumeMessages(
+    queue: QueueName,
+    callback: (message: string) => Promise<void>,
+  ): Promise<void> {
     if (!this.channel) {
       await this.initialize();
     }
@@ -76,12 +85,12 @@ class MessageQueueService {
             console.log(`Successfully processed message from ${queue}`);
           } catch (error) {
             console.error(`Error processing message from ${queue}:`, error);
-            
+
             // Determine if we should requeue based on error type
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-            const requeue = !error.toString().includes('validation') && 
-                           !error.toString().includes('parse');
-            
+
+            const requeue =
+              !error.toString().includes('validation') && !error.toString().includes('parse');
+
             if (requeue) {
               console.log(`Requeuing message in ${queue}`);
               // Requeue the message

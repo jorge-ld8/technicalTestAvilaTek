@@ -10,5 +10,4 @@ const ENV = jetEnv({
   DatabaseUrl: str,
 });
 
-
 export default ENV;

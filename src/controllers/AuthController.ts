@@ -10,7 +10,11 @@ class AuthController {
     this.authService = new AuthService();
   }
 
-  public async register(req: Request, res: Response, next: NextFunction): Promise<void> {
+  public async register(
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ): Promise<void> {
     try {
       const { firstName, lastName, email, password } = req.body;
 
@@ -20,18 +24,22 @@ class AuthController {
         email,
         password,
       });
-      
+
       res.status(HttpStatusCodes.CREATED).json({ user });
     } catch (error) {
       next(error);
     }
   }
 
-  public async login(req: Request, res: Response, next: NextFunction): Promise<void> {
+  public async login(
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ): Promise<void> {
     try {
       const { email, password } = req.body;
       const { user, token } = await this.authService.login({ email, password });
-  
+
       res.status(HttpStatusCodes.OK).json({
         token,
         user,
@@ -41,7 +49,11 @@ class AuthController {
     }
   }
 
-  public async getProfile(req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> {
+  public async getProfile(
+    req: AuthenticatedRequest,
+    res: Response,
+    next: NextFunction,
+  ): Promise<void> {
     try {
       const userId = req.user!.id;
       const user = await this.authService.getById(userId);
@@ -54,26 +66,31 @@ class AuthController {
     }
   }
 
-  public logout(req: AuthenticatedRequest, res: Response, next: NextFunction): void {
+  public logout(
+    req: AuthenticatedRequest,
+    res: Response,
+    next: NextFunction,
+  ): void {
     try {
       if (!req.user) {
-        res.status(HttpStatusCodes.UNAUTHORIZED).json({ message: 'Authentication required' });
+        res
+          .status(HttpStatusCodes.UNAUTHORIZED)
+          .json({ message: 'Authentication required' });
         return;
       }
 
       const authHeader = req.headers.authorization;
       let token: string | undefined;
-      
+
       if (authHeader?.startsWith('Bearer ')) {
         token = authHeader.split(' ')[1];
       }
 
       this.authService.logout(token);
-      
+
       res.status(HttpStatusCodes.OK).json({
         message: 'Logged out successfully',
       });
-      
     } catch (error) {
       next(error);
     }

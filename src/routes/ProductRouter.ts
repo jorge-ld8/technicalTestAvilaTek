@@ -1,17 +1,17 @@
-import { RequestHandler, Router } from 'express';
+import { RequestHandler } from 'express';
 import ProductController from '@src/controllers/ProductController';
 import { validateRequest } from '@src/middlewares/validateRequest';
 import { authenticate } from '@src/middlewares/authMiddleware';
 import { authorize } from '@src/middlewares/authMiddleware';
 import { UserRole } from '@src/types/auth.d';
 import { BaseRouter } from './common/BaseRouter';
-import { 
-  createProductsSchema, 
-  deleteProductsSchema, 
-  getInStockSchema, 
-  searchProductSchema, 
-  updateProductsSchema, 
-  updateStockSchema, 
+import {
+  createProductsSchema,
+  deleteProductsSchema,
+  getInStockSchema,
+  searchProductSchema,
+  updateProductsSchema,
+  updateStockSchema,
 } from '@src/validators/product.validator';
 
 /**
@@ -204,7 +204,7 @@ class ProductRouter extends BaseRouter<ProductController> {
   }
 
   protected setupRoutes(): void {
-    // Public routes 
+    // Public routes
     /**
      * @swagger
      * /products:
@@ -224,9 +224,10 @@ class ProductRouter extends BaseRouter<ProductController> {
      *                   items:
      *                     $ref: '#/components/schemas/Product'
      */
-    this.router.get('/', 
-      (req, res, next) => this.controller.getAllProducts(req, res, next));
-    
+    this.router.get('/', (req, res, next) =>
+      this.controller.getAllProducts(req, res, next),
+    );
+
     /**
      * @swagger
      * /products/in-stock:
@@ -254,10 +255,12 @@ class ProductRouter extends BaseRouter<ProductController> {
      *                   items:
      *                     $ref: '#/components/schemas/Product'
      */
-    this.router.get('/in-stock', 
+    this.router.get(
+      '/in-stock',
       validateRequest(getInStockSchema) as RequestHandler,
-      (req, res, next) => this.controller.getInStockProducts(req, res, next));
-    
+      (req, res, next) => this.controller.getInStockProducts(req, res, next),
+    );
+
     /**
      * @swagger
      * /products/search:
@@ -284,10 +287,12 @@ class ProductRouter extends BaseRouter<ProductController> {
      *                   items:
      *                     $ref: '#/components/schemas/Product'
      */
-    this.router.get('/search', 
+    this.router.get(
+      '/search',
       validateRequest(searchProductSchema) as RequestHandler,
-      (req, res, next) => this.controller.searchProducts(req, res, next));
-    
+      (req, res, next) => this.controller.searchProducts(req, res, next),
+    );
+
     /**
      * @swagger
      * /products/{id}:
@@ -315,9 +320,10 @@ class ProductRouter extends BaseRouter<ProductController> {
      *       404:
      *         description: Product not found
      */
-    this.router.get('/:id', 
-      (req, res, next) => this.controller.getProductById(req, res, next));
-    
+    this.router.get('/:id', (req, res, next) =>
+      this.controller.getProductById(req, res, next),
+    );
+
     //  protected routes
     /**
      * @swagger
@@ -352,12 +358,14 @@ class ProductRouter extends BaseRouter<ProductController> {
      *       403:
      *         description: Forbidden - Admin access required
      */
-    this.router.post('/', 
+    this.router.post(
+      '/',
       authenticate,
       authorize([UserRole.ADMIN]),
       validateRequest(createProductsSchema) as RequestHandler,
-      (req, res, next) => this.controller.createProducts(req, res, next));
-    
+      (req, res, next) => this.controller.createProducts(req, res, next),
+    );
+
     /**
      * @swagger
      * /products:
@@ -393,12 +401,14 @@ class ProductRouter extends BaseRouter<ProductController> {
      *       404:
      *         description: One or more products not found
      */
-    this.router.patch('/', 
+    this.router.patch(
+      '/',
       authenticate,
       authorize([UserRole.ADMIN]),
       validateRequest(updateProductsSchema) as RequestHandler,
-      (req, res, next) => this.controller.updateProducts(req, res, next));
-    
+      (req, res, next) => this.controller.updateProducts(req, res, next),
+    );
+
     /**
      * @swagger
      * /products:
@@ -436,12 +446,14 @@ class ProductRouter extends BaseRouter<ProductController> {
      *       404:
      *         description: One or more products not found
      */
-    this.router.delete('/', 
+    this.router.delete(
+      '/',
       authenticate,
       authorize([UserRole.ADMIN]),
       validateRequest(deleteProductsSchema) as RequestHandler,
-      (req, res, next) => this.controller.deleteProducts(req, res, next));
-    
+      (req, res, next) => this.controller.deleteProducts(req, res, next),
+    );
+
     /**
      * @swagger
      * /products/{id}/stock:
@@ -483,13 +495,15 @@ class ProductRouter extends BaseRouter<ProductController> {
      *       404:
      *         description: Product not found
      */
-    this.router.patch('/:id/stock', 
+    this.router.patch(
+      '/:id/stock',
       authenticate,
       authorize([UserRole.ADMIN]),
       validateRequest(updateStockSchema) as RequestHandler,
-      (req, res, next) => this.controller.updateProductStock(req, res, next));
+      (req, res, next) => this.controller.updateProductStock(req, res, next),
+    );
   }
 }
 
 const productRouterInstance = new ProductRouter();
-export default productRouterInstance.getRouter(); 
+export default productRouterInstance.getRouter();

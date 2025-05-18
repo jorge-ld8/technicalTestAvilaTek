@@ -20,4 +20,4 @@ export interface PaginationMetadata {
   total: number;
   currentPage: number;
   pageSize: number;
-} 
+}

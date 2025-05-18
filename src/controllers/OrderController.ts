@@ -12,27 +12,42 @@ class OrderController {
     this.orderService = new OrderService();
   }
 
-  public async createOrder(req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> {
+  public async createOrder(
+    req: AuthenticatedRequest,
+    res: Response,
+    next: NextFunction,
+  ): Promise<void> {
     try {
       if (!req.user) {
-        res.status(HttpStatusCodes.UNAUTHORIZED).json({ message: 'Authentication required' });
+        res
+          .status(HttpStatusCodes.UNAUTHORIZED)
+          .json({ message: 'Authentication required' });
         return;
       }
 
       const userId = req.user.id;
       const orderData = req.body as CreateOrderDto;
 
-      const createdOrder = await this.orderService.createOrder(userId, orderData);
+      const createdOrder = await this.orderService.createOrder(
+        userId,
+        orderData,
+      );
       res.status(HttpStatusCodes.CREATED).json({ order: createdOrder });
     } catch (error) {
       next(error);
     }
   }
 
-  public async getOrderById(req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> {
+  public async getOrderById(
+    req: AuthenticatedRequest,
+    res: Response,
+    next: NextFunction,
+  ): Promise<void> {
     try {
       if (!req.user) {
-        res.status(HttpStatusCodes.UNAUTHORIZED).json({ message: 'Authentication required' });
+        res
+          .status(HttpStatusCodes.UNAUTHORIZED)
+          .json({ message: 'Authentication required' });
         return;
       }
 
@@ -47,10 +62,16 @@ class OrderController {
     }
   }
 
-  public async getMyOrders(req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> {
+  public async getMyOrders(
+    req: AuthenticatedRequest,
+    res: Response,
+    next: NextFunction,
+  ): Promise<void> {
     try {
       if (!req.user) {
-        res.status(HttpStatusCodes.UNAUTHORIZED).json({ message: 'Authentication required' });
+        res
+          .status(HttpStatusCodes.UNAUTHORIZED)
+          .json({ message: 'Authentication required' });
         return;
       }
 
@@ -60,17 +81,26 @@ class OrderController {
         pageSize: req.query.pageSize ? Number(req.query.pageSize) : undefined,
       };
 
-      const result = await this.orderService.getOrdersForUser(userId, pagination);
+      const result = await this.orderService.getOrdersForUser(
+        userId,
+        pagination,
+      );
       res.status(HttpStatusCodes.OK).json(result);
     } catch (error) {
       next(error);
     }
   }
 
-  public async getAllOrders(req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> {
+  public async getAllOrders(
+    req: AuthenticatedRequest,
+    res: Response,
+    next: NextFunction,
+  ): Promise<void> {
     try {
       if (!req.user) {
-        res.status(HttpStatusCodes.UNAUTHORIZED).json({ message: 'Authentication required' });
+        res
+          .status(HttpStatusCodes.UNAUTHORIZED)
+          .json({ message: 'Authentication required' });
         return;
       }
 
@@ -86,17 +116,26 @@ class OrderController {
     }
   }
 
-  public async updateOrderStatus(req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> {
+  public async updateOrderStatus(
+    req: AuthenticatedRequest,
+    res: Response,
+    next: NextFunction,
+  ): Promise<void> {
     try {
       if (!req.user) {
-        res.status(HttpStatusCodes.UNAUTHORIZED).json({ message: 'Authentication required' });
+        res
+          .status(HttpStatusCodes.UNAUTHORIZED)
+          .json({ message: 'Authentication required' });
         return;
       }
 
       const { id } = req.params;
       const { status } = req.body as UpdateOrderStatusDto;
 
-      const updatedOrder = await this.orderService.updateOrderStatus(id, status);
+      const updatedOrder = await this.orderService.updateOrderStatus(
+        id,
+        status,
+      );
       res.status(HttpStatusCodes.OK).json({ order: updatedOrder });
     } catch (error) {
       next(error);
@@ -104,4 +143,4 @@ class OrderController {
   }
 }
 
-export default OrderController; 
+export default OrderController;

@@ -151,10 +151,12 @@ class AuthRouter extends BaseRouter<AuthController> {
      *       429:
      *         description: Rate limit exceeded
      */
-    this.router.post('/register', 
+    this.router.post(
+      '/register',
       limiter,
       validateRequest(registerSchema) as RequestHandler,
-      (req, res, next) => this.controller.register(req, res, next));
+      (req, res, next) => this.controller.register(req, res, next),
+    );
 
     /**
      * @swagger
@@ -182,10 +184,12 @@ class AuthRouter extends BaseRouter<AuthController> {
      *       429:
      *         description: Rate limit exceeded
      */
-    this.router.post('/login', 
+    this.router.post(
+      '/login',
       limiter,
       validateRequest(loginSchema) as RequestHandler,
-      (req, res, next) => this.controller.login(req, res, next));
+      (req, res, next) => this.controller.login(req, res, next),
+    );
 
     /**
      * @swagger
@@ -207,9 +211,9 @@ class AuthRouter extends BaseRouter<AuthController> {
      *       404:
      *         description: User not found
      */
-    this.router.get('/profile', 
-      authenticate,
-      (req, res, next) => this.controller.getProfile(req, res, next));
+    this.router.get('/profile', authenticate, (req, res, next) =>
+      this.controller.getProfile(req, res, next),
+    );
 
     /**
      * @swagger
@@ -233,9 +237,9 @@ class AuthRouter extends BaseRouter<AuthController> {
      *       401:
      *         description: Unauthorized - Invalid or missing token
      */
-    this.router.post('/logout',
-      authenticate,
-      (req, res, next) => this.controller.logout(req, res, next));
+    this.router.post('/logout', authenticate, (req, res, next) =>
+      this.controller.logout(req, res, next),
+    );
   }
 }
 

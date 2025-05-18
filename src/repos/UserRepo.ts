@@ -3,7 +3,10 @@ import prisma, { User } from '@src/common/prisma';
 import { RegisterUserDto, UpdateUserDto, UserRole } from '@src/types/auth.d';
 import { IBaseRepository } from './BaseRepository';
 import { PaginatedResult, PaginationParams } from '@src/types/common';
-import { createPaginatedResult, normalizePaginationParams } from '@src/common/util/pagination';
+import {
+  createPaginatedResult,
+  normalizePaginationParams,
+} from '@src/common/util/pagination';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 
 function mapPrismaUserToIUser(user: User): IUser {
@@ -17,10 +20,12 @@ function mapPrismaUserToIUser(user: User): IUser {
   };
 }
 
-class UserRepo implements IBaseRepository<IUser, RegisterUserDto, UpdateUserDto> {
+class UserRepo
+implements IBaseRepository<IUser, RegisterUserDto, UpdateUserDto>
+{
   async getOne(email: string): Promise<IUser | null> {
     const user = await prisma.user.findFirst({
-      where: { 
+      where: {
         email,
         isDeleted: false,
       },
@@ -30,7 +35,7 @@ class UserRepo implements IBaseRepository<IUser, RegisterUserDto, UpdateUserDto>
 
   async getById(id: string): Promise<IUser | null> {
     const user = await prisma.user.findFirst({
-      where: { 
+      where: {
         id,
         isDeleted: false,
       },
@@ -41,7 +46,7 @@ class UserRepo implements IBaseRepository<IUser, RegisterUserDto, UpdateUserDto>
   async getAll(pagination?: PaginationParams): Promise<PaginatedResult<IUser>> {
     const { page, pageSize } = normalizePaginationParams(pagination);
     const skip = (page - 1) * pageSize;
-    
+
     const [users, totalCount] = await Promise.all([
       prisma.user.findMany({
         where: { isDeleted: false },
@@ -53,15 +58,12 @@ class UserRepo implements IBaseRepository<IUser, RegisterUserDto, UpdateUserDto>
         where: { isDeleted: false },
       }),
     ]);
-    
-    return createPaginatedResult(
-      users.map(mapPrismaUserToIUser),
-      {
-        total: totalCount,
-        currentPage: page,
-        pageSize,
-      }
-    );
+
+    return createPaginatedResult(users.map(mapPrismaUserToIUser), {
+      total: totalCount,
+      currentPage: page,
+      pageSize,
+    });
   }
 
   async create(data: RegisterUserDto): Promise<IUser> {
@@ -91,7 +93,10 @@ class UserRepo implements IBaseRepository<IUser, RegisterUserDto, UpdateUserDto>
       });
       return mapPrismaUserToIUser(user);
     } catch (error) {
-      if (error instanceof PrismaClientKnownRequestError && error.code === 'P2025') {
+      if (
+        error instanceof PrismaClientKnownRequestError &&
+        error.code === 'P2025'
+      ) {
         return null;
       }
       throw error;
@@ -105,7 +110,10 @@ class UserRepo implements IBaseRepository<IUser, RegisterUserDto, UpdateUserDto>
       });
       return true;
     } catch (error) {
-      if (error instanceof PrismaClientKnownRequestError && error.code === 'P2025') {
+      if (
+        error instanceof PrismaClientKnownRequestError &&
+        error.code === 'P2025'
+      ) {
         return false;
       }
       throw error;
@@ -114,11 +122,11 @@ class UserRepo implements IBaseRepository<IUser, RegisterUserDto, UpdateUserDto>
 
   async deleteAll(): Promise<void> {
     await prisma.user.deleteMany();
-  } 
+  }
 
   async insertMult(users: RegisterUserDto[]): Promise<IUser[]> {
     const createdUsers = await prisma.$transaction(
-      users.map(data => 
+      users.map((data) =>
         prisma.user.create({
           data: {
             firstName: data.firstName,

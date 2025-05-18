@@ -42,8 +42,8 @@ class ProductService {
     }
 
     // Validate each product
-    createProductDtos.forEach(product => this.validateProduct(product));
-    
+    createProductDtos.forEach((product) => this.validateProduct(product));
+
     const createdProducts = await this.productRepo.createMany(createProductDtos);
     return createdProducts.map((product) => this.mapProductToResponseDto(product));
   }
@@ -60,11 +60,11 @@ class ProductService {
     productsToUpdate.forEach(({ data }) => this.validateProductUpdate(data));
 
     const existingProducts = await this.productRepo.getAll();
-    const existingProductsIds = existingProducts.data.map(product => product.id);
-    const allIds = productsToUpdate.map(p => p.id);
-    
+    const existingProductsIds = existingProducts.data.map((product) => product.id);
+    const allIds = productsToUpdate.map((p) => p.id);
+
     // Filter to only include existing products
-    const updatesForExistingProducts = productsToUpdate.filter(p => 
+    const updatesForExistingProducts = productsToUpdate.filter((p) =>
       existingProductsIds.includes(p.id),
     );
 
@@ -73,10 +73,10 @@ class ProductService {
 
     console.log('existingProductsIds');
     console.log(existingProductsIds);
-    
-    const notFoundIds = allIds.filter(id => !existingProductsIds.includes(id));
+
+    const notFoundIds = allIds.filter((id) => !existingProductsIds.includes(id));
     const updated = await this.productRepo.updateMany(updatesForExistingProducts);
-    
+
     return {
       updated: updated.map((product) => this.mapProductToResponseDto(product)),
       notFound: notFoundIds,
@@ -90,12 +90,14 @@ class ProductService {
     if (!ids.length) {
       throw new BadRequestError('No product IDs provided for deletion');
     }
-    
+
     // For each product being deleted, find and delete related orders in PENDING or PROCESSING state
-    await Promise.all(ids.map(async (productId) => {
-      await this.deleteRelatedOrders(productId);
-    }));
-    
+    await Promise.all(
+      ids.map(async (productId) => {
+        await this.deleteRelatedOrders(productId);
+      }),
+    );
+
     return await this.productRepo.deleteMany(ids);
   }
 
@@ -105,16 +107,18 @@ class ProductService {
   private async deleteRelatedOrders(productId: string): Promise<void> {
     try {
       // Get orders that contain the product ID with PENDING or PROCESSING status
-      const ordersToDelete = await this.orderService.getOrdersByProductId(
-        productId, 
-        [OrderStatus.PENDING, OrderStatus.PROCESSING],
-      );
-      
+      const ordersToDelete = await this.orderService.getOrdersByProductId(productId, [
+        OrderStatus.PENDING,
+        OrderStatus.PROCESSING,
+      ]);
+
       // Delete each order
-      await Promise.all(ordersToDelete.map(async (order) => {
-        await this.orderService.deleteOrder(order.id);
-      }));
-      
+      await Promise.all(
+        ordersToDelete.map(async (order) => {
+          await this.orderService.deleteOrder(order.id);
+        }),
+      );
+
       console.log(`Deleted ${ordersToDelete.length} orders related to product ${productId}`);
     } catch (error) {
       console.error(`Error deleting orders for product ${productId}:`, error);
@@ -123,8 +127,10 @@ class ProductService {
     }
   }
 
-  public async getInStock(minStock = 1, pagination?: PaginationParams): 
-    Promise<PaginatedResult<ProductResponseDto>> {
+  public async getInStock(
+    minStock = 1,
+    pagination?: PaginationParams,
+  ): Promise<PaginatedResult<ProductResponseDto>> {
     const products = await this.productRepo.getInStock(minStock, pagination);
     return {
       ...products,
@@ -144,8 +150,10 @@ class ProductService {
     return this.mapProductToResponseDto(updatedProduct);
   }
 
-  public async search(query: string, pagination?: PaginationParams): 
-  Promise<PaginatedResult<ProductResponseDto>> {
+  public async search(
+    query: string,
+    pagination?: PaginationParams,
+  ): Promise<PaginatedResult<ProductResponseDto>> {
     if (!query || query.trim() === '') {
       throw new BadRequestError('Search query cannot be empty');
     }
@@ -187,4 +195,4 @@ class ProductService {
   }
 }
 
-export default ProductService; 
+export default ProductService;

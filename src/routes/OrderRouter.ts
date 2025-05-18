@@ -3,10 +3,10 @@ import { validateRequest } from '@src/middlewares/validateRequest';
 import { authenticate } from '@src/middlewares/authMiddleware';
 import { authorize } from '@src/middlewares/authMiddleware';
 import { BaseRouter } from './common/BaseRouter';
-import { 
-  createOrderSchema, 
-  getOrderByIdSchema, 
-  listOrdersSchema, 
+import {
+  createOrderSchema,
+  getOrderByIdSchema,
+  listOrdersSchema,
   updateOrderStatusSchema,
 } from '@src/validators/order.validator';
 import OrderController from '@src/controllers/OrderController';
@@ -214,10 +214,12 @@ class OrderRouter extends BaseRouter<OrderController> {
      *       422:
      *         description: Insufficient stock or other validation error
      */
-    this.router.post('/', 
+    this.router.post(
+      '/',
       validateRequest(createOrderSchema) as RequestHandler,
-      (req, res, next) => this.controller.createOrder(req, res, next));
-    
+      (req, res, next) => this.controller.createOrder(req, res, next),
+    );
+
     /**
      * @swagger
      * /orders/me:
@@ -252,10 +254,12 @@ class OrderRouter extends BaseRouter<OrderController> {
      *       401:
      *         description: Unauthorized - Authentication required
      */
-    this.router.get('/me', 
+    this.router.get(
+      '/me',
       validateRequest(listOrdersSchema) as RequestHandler,
-      (req, res, next) => this.controller.getMyOrders(req, res, next));
-    
+      (req, res, next) => this.controller.getMyOrders(req, res, next),
+    );
+
     /**
      * @swagger
      * /orders/{id}:
@@ -290,10 +294,12 @@ class OrderRouter extends BaseRouter<OrderController> {
      *       404:
      *         description: Order not found
      */
-    this.router.get('/:id', 
+    this.router.get(
+      '/:id',
       validateRequest(getOrderByIdSchema) as RequestHandler,
-      (req, res, next) => this.controller.getOrderById(req, res, next));
-    
+      (req, res, next) => this.controller.getOrderById(req, res, next),
+    );
+
     /**
      * @swagger
      * /orders:
@@ -330,11 +336,13 @@ class OrderRouter extends BaseRouter<OrderController> {
      *       403:
      *         description: Forbidden - Admin access required
      */
-    this.router.get('/', 
+    this.router.get(
+      '/',
       authorize([UserRole.ADMIN]),
       validateRequest(listOrdersSchema) as RequestHandler,
-      (req, res, next) => this.controller.getAllOrders(req, res, next));
-    
+      (req, res, next) => this.controller.getAllOrders(req, res, next),
+    );
+
     /**
      * @swagger
      * /orders/{id}/status:
@@ -376,12 +384,14 @@ class OrderRouter extends BaseRouter<OrderController> {
      *       404:
      *         description: Order not found
      */
-    this.router.patch('/:id/status', 
+    this.router.patch(
+      '/:id/status',
       authorize([UserRole.ADMIN]),
       validateRequest(updateOrderStatusSchema) as RequestHandler,
-      (req, res, next) => this.controller.updateOrderStatus(req, res, next));
+      (req, res, next) => this.controller.updateOrderStatus(req, res, next),
+    );
   }
 }
 
 const orderRouterInstance = new OrderRouter();
-export default orderRouterInstance.getRouter(); 
+export default orderRouterInstance.getRouter();

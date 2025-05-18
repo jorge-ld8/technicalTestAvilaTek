@@ -2,7 +2,7 @@ import { Request } from 'express';
 import { IUser } from '@src/models/User';
 
 export interface AuthenticatedUser {
-  id: string; 
+  id: string;
   email: string;
   role: UserRole;
 }
@@ -26,7 +26,7 @@ export interface UpdateUserDto {
 }
 
 export interface RegisterResponse {
-    user: IUser;
+  user: IUser;
 }
 
 export interface LoginUserDto {
@@ -39,20 +39,18 @@ export interface LoginResponse {
   token: string;
 }
 export enum UserRole {
-    CLIENT = 'CLIENT',
-    ADMIN = 'ADMIN'
-  }
-  
-export interface JwtPayload {
-    userId: string;
-    email: string;
-    role: UserRole;
-  }
-  
-export interface AuthUser {
-    id: string;
-    email: string;
-    role: UserRole;
-  }
-  
+  CLIENT = 'CLIENT',
+  ADMIN = 'ADMIN',
+}
 
+export interface JwtPayload {
+  userId: string;
+  email: string;
+  role: UserRole;
+}
+
+export interface AuthUser {
+  id: string;
+  email: string;
+  role: UserRole;
+}
