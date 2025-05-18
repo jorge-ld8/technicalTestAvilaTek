@@ -4,8 +4,8 @@ This project is a robust and scalable REST API for a fictional e-commerce platfo
 
 ## Prerequisites
 
-*   [npm](usually comes with Node.js)
-*   [Docker](for running PostgreSQL and RabbitMQ)
+*   Npm/Node
+*   Docker
 
 ## Getting Started
 
@@ -39,7 +39,7 @@ Follow these steps to get the project up and running on your local machine:
     Run the containers:
 
     ```bash
-    docker-compose up -d
+    docker-compose -f docker-compose.yaml up -d
     ```
 
     *   **RabbitMQ**: Access the management UI on `http://localhost:15672`.
@@ -75,18 +75,7 @@ Follow these steps to get the project up and running on your local machine:
     ```bash
     npm run start:worker
     ```
-    *(You might need to add this script to your `package.json` if it doesn't exist)*
-
-    **Example `start:worker` script in `package.json`:**
-    ```json
-    "scripts": {
-      // ... other scripts
-      "start:worker": "ts-node src/workers/index.ts"
-    }
-    ```
 ## API Documentation
 
 Once the server is running, you can access the Swagger API documentation at:
 `http://localhost:<PORT>/api-docs` (e.g., `http://localhost:3000/api-docs`)
-
-## Project Structure Overview
