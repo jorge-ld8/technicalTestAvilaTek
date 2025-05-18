@@ -1,11 +1,11 @@
 services:
- rabbitmq:
+  rabbitmq:
     image: rabbitmq:4-management
     container_name: my_rabbitmq
     restart: always
     ports:
-      - "5672:5672" # For AMQP
-      - "15672:15672" # For Management UI
+      - "5672:5672" 
+      - "15672:15672"
     volumes:
       - rabbitmq_data:/var/lib/rabbitmq/
 
