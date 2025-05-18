@@ -33,7 +33,7 @@ Follow these steps to get the project up and running on your local machine:
     cp .env.example ./config/.env.development
     ```
 
-    Update the `.env` file with your specific configurations or if an env was provided to you by the team.
+    Update the `.env` file with your specific configurations or if an .env file was provided to you by the team.
 
 4.  **Set Up Docker Container for RabbitMQ**
 
