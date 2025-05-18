@@ -12,3 +12,11 @@ export interface UpdateProductDto {
     price?: number;
     stock?: number;
 }
+
+export interface ProductResponseDto {
+    id: string;
+    name: string;
+    description: string | null;
+    price: number;
+    stock: number;
+}

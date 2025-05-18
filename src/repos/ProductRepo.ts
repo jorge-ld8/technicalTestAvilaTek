@@ -5,6 +5,7 @@ import { IProduct } from '@src/models/Product';
 import { IBaseRepository } from './BaseRepository';
 import { PaginatedResult, PaginationParams } from '@src/types/common';
 import { createPaginatedResult, normalizePaginationParams } from '@src/common/util/pagination';
+import { Prisma } from '../../generated/prisma/edge';
 
 
 // Helper function to convert Prisma Product to IProduct
@@ -165,15 +166,35 @@ class ProductRepo implements IBaseRepository<IProduct, CreateProductDto, UpdateP
     return results;
   }
 
-  async getInStock(minStock = 1): Promise<IProduct[]> {
-    const products = await prisma.product.findMany({
-      where: {
-        stock: {
-          gte: minStock,
+  async getInStock(minStock = 1, pagination?: PaginationParams): 
+  Promise<PaginatedResult<IProduct>> {
+    const { page, pageSize } = normalizePaginationParams(pagination);
+    const skip = (page - 1) * pageSize;
+
+    const [products, totalCount] = await Promise.all([
+      prisma.product.findMany({
+        skip,
+        take: pageSize,
+        where: {
+          stock: {
+            gte: minStock,
+          },
         },
-      },
-    });
-    return products.map(mapPrismaProductToIProduct);
+        orderBy: { createdAt: 'desc' },
+      }),
+      prisma.product.count({
+        where: {
+          stock: {
+            gte: minStock,
+          },
+        },
+      }),
+    ]);
+
+    return createPaginatedResult(
+      products.map(mapPrismaProductToIProduct),
+      { total: totalCount, currentPage: page, pageSize }
+    );
   }
 
   async updateStock(id: string, newStock: number): Promise<IProduct | null> {
@@ -186,26 +207,43 @@ class ProductRepo implements IBaseRepository<IProduct, CreateProductDto, UpdateP
     return mapPrismaProductToIProduct(product);
   }
 
-  async search(query: string): Promise<IProduct[]> {
-    const products = await prisma.product.findMany({
-      where: {
-        OR: [
-          {
-            name: {
-              contains: query,
-              mode: 'insensitive',
-            },
+  async search(query: string, pagination?: PaginationParams): Promise<PaginatedResult<IProduct>> {
+    const { page, pageSize } = normalizePaginationParams(pagination);
+    const skip = (page - 1) * pageSize;
+
+    const searchCondition = {
+      OR: [
+        {
+          name: {
+            contains: query,
+            mode: Prisma.QueryMode.insensitive,
           },
-          {
-            description: {
-              contains: query,
-              mode: 'insensitive',
-            },
+        },
+        {
+          description: {
+            contains: query,
+            mode: Prisma.QueryMode.insensitive,
           },
-        ],
-      },
-    });
-    return products.map(mapPrismaProductToIProduct);
+        },
+      ],
+    };
+
+    const [products, totalCount] = await Promise.all([
+      prisma.product.findMany({
+        skip,
+        take: pageSize,
+        where: searchCondition,
+        orderBy: { createdAt: 'desc' },
+      }),
+      prisma.product.count({
+        where: searchCondition,
+      }),
+    ]);
+
+    return createPaginatedResult(
+      products.map(mapPrismaProductToIProduct),
+      { total: totalCount, currentPage: page, pageSize },
+    );
   }
 }
 

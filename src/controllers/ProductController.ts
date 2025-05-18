@@ -3,6 +3,7 @@ import HttpStatusCodes from '@src/common/constants/HttpStatusCodes';
 import { AuthenticatedRequest } from '@src/types/auth';
 import ProductService from '@src/services/ProductService';
 import { CreateProductDto, UpdateProductDto } from '@src/types/products';
+import { PaginationParams } from '@src/types/common';
 
 class ProductController {
   private productService: ProductService;
@@ -13,7 +14,12 @@ class ProductController {
 
   public async getAllProducts(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-      const products = await this.productService.getAll();
+      const pagination: PaginationParams = {
+        page: req.query.page ? Number(req.query.page) : undefined,
+        pageSize: req.query.pageSize ? Number(req.query.pageSize) : undefined,
+      };
+
+      const products = await this.productService.getAll(pagination);
       res.status(HttpStatusCodes.OK).json({ products });
     } catch (error) {
       next(error);
@@ -116,8 +122,14 @@ class ProductController {
   public async getInStockProducts(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const minStock = req.query.minStock ? parseInt(req.query.minStock as string, 10) : 1;
-      const products = await this.productService.getInStock(minStock);
-      res.status(HttpStatusCodes.OK).json({ products });
+
+      const pagination: PaginationParams = {
+        page: req.query.page ? Number(req.query.page) : undefined,
+        pageSize: req.query.pageSize ? Number(req.query.pageSize) : undefined,
+      };
+
+      const result = await this.productService.getInStock(minStock, pagination);
+      res.status(HttpStatusCodes.OK).json(result);
     } catch (error) {
       next(error);
     }
@@ -145,15 +157,20 @@ class ProductController {
   public async searchProducts(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const { query } = req.query;
+
+      const pagination: PaginationParams = {
+        page: req.query.page ? Number(req.query.page) : undefined,
+        pageSize: req.query.pageSize ? Number(req.query.pageSize) : undefined,
+      };
       
       if (!query || typeof query !== 'string') {
         res.status(HttpStatusCodes.BAD_REQUEST).json({ 
-          message: 'Search query is required' 
+          message: 'Search query is required',
         });
         return;
       }
       
-      const products = await this.productService.search(query);
+      const products = await this.productService.search(query, pagination);
       res.status(HttpStatusCodes.OK).json({ products });
     } catch (error) {
       next(error);

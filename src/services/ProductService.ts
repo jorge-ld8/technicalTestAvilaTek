@@ -1,24 +1,29 @@
 import { IProduct } from '@src/models/Product';
 import ProductRepo from '@src/repos/ProductRepo';
-import { CreateProductDto, UpdateProductDto } from '@src/types/products';
+import { CreateProductDto, ProductResponseDto, UpdateProductDto } from '@src/types/products';
 import { NotFoundError, BadRequestError } from '@src/common/errors';
 import { PaginatedResult, PaginationParams } from '@src/types/common';
+
 class ProductService {
   private productRepo = new ProductRepo();
 
-  public async getAll(pagination?: PaginationParams): Promise<PaginatedResult<IProduct>> {
-    return await this.productRepo.getAll(pagination);
+  public async getAll(pagination?: PaginationParams): Promise<PaginatedResult<ProductResponseDto>> {
+    const products = await this.productRepo.getAll(pagination);
+    return {
+      ...products,
+      data: products.data.map((product) => this.mapProductToResponseDto(product)),
+    };
   }
 
-  public async getById(id: string): Promise<IProduct> {
+  public async getById(id: string): Promise<ProductResponseDto> {
     const product = await this.productRepo.getById(id);
     if (!product) {
       throw new NotFoundError('Product not found');
     }
-    return product;
+    return this.mapProductToResponseDto(product);
   }
 
-  public async createMany(createProductDtos: CreateProductDto[]): Promise<IProduct[]> {
+  public async createMany(createProductDtos: CreateProductDto[]): Promise<ProductResponseDto[]> {
     if (!createProductDtos.length) {
       throw new BadRequestError('No products provided for creation');
     }
@@ -26,11 +31,12 @@ class ProductService {
     // Validate each product
     createProductDtos.forEach(product => this.validateProduct(product));
     
-    return await this.productRepo.createMany(createProductDtos);
+    const createdProducts = await this.productRepo.createMany(createProductDtos);
+    return createdProducts.map((product) => this.mapProductToResponseDto(product));
   }
 
   public async updateMany(productsToUpdate: { id: string, data: UpdateProductDto }[]): Promise<{
-    updated: IProduct[],
+    updated: ProductResponseDto[],
     notFound: string[],
   }> {
     if (!productsToUpdate.length) {
@@ -53,7 +59,7 @@ class ProductService {
     const updated = await this.productRepo.updateMany(updatesForExistingProducts);
     
     return {
-      updated,
+      updated: updated.map((product) => this.mapProductToResponseDto(product)),
       notFound: notFoundIds,
     };
   }
@@ -69,11 +75,16 @@ class ProductService {
     return await this.productRepo.deleteMany(ids);
   }
 
-  public async getInStock(minStock = 1): Promise<IProduct[]> {
-    return await this.productRepo.getInStock(minStock);
+  public async getInStock(minStock = 1, pagination?: PaginationParams): 
+    Promise<PaginatedResult<ProductResponseDto>> {
+    const products = await this.productRepo.getInStock(minStock, pagination);
+    return {
+      ...products,
+      data: products.data.map((product) => this.mapProductToResponseDto(product)),
+    };
   }
 
-  public async updateStock(id: string, newStock: number): Promise<IProduct> {
+  public async updateStock(id: string, newStock: number): Promise<ProductResponseDto> {
     if (newStock < 0) {
       throw new BadRequestError('Stock level cannot be negative');
     }
@@ -82,14 +93,19 @@ class ProductService {
     if (!updatedProduct) {
       throw new NotFoundError('Product not found');
     }
-    return updatedProduct;
+    return this.mapProductToResponseDto(updatedProduct);
   }
 
-  public async search(query: string): Promise<IProduct[]> {
+  public async search(query: string, pagination?: PaginationParams): 
+  Promise<PaginatedResult<ProductResponseDto>> {
     if (!query || query.trim() === '') {
       throw new BadRequestError('Search query cannot be empty');
     }
-    return await this.productRepo.search(query);
+    const products = await this.productRepo.search(query, pagination);
+    return {
+      ...products,
+      data: products.data.map((product) => this.mapProductToResponseDto(product)),
+    };
   }
 
   private validateProduct(product: CreateProductDto): void {
@@ -110,6 +126,16 @@ class ProductService {
     if (product.stock !== undefined && product.stock < 0) {
       throw new BadRequestError('Stock availability cannot be negative');
     }
+  }
+
+  private mapProductToResponseDto(product: IProduct): ProductResponseDto {
+    return {
+      id: product.id,
+      name: product.name,
+      description: product.description,
+      price: product.price,
+      stock: product.stock,
+    };
   }
 }
 
