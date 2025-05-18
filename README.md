@@ -33,9 +33,9 @@ Follow these steps to get the project up and running on your local machine:
     cp .env.example ./config/.env.development
     ```
 
-    Update the `.env` file with your specific configurations.
+    Update the `.env` file with your specific configurations or if an env was provided to you by the team.
 
-4.  **Set Up Docker Container for RabbitMQ (RabbitMQ)**
+4.  **Set Up Docker Container for RabbitMQ**
 
     Run the containers:
 
@@ -45,17 +45,7 @@ Follow these steps to get the project up and running on your local machine:
 
     *   **RabbitMQ**: Access the management UI on `http://localhost:15672`.
 
-5.  **Database Migrations**
-
-    Apply the database schema using Prisma migrations:
-
-    ```bash
-    npx prisma migrate dev --name init 
-    ```
-    This command will also generate the Prisma Client based on your schema.
-    If you make changes to the `schema.prisma` file, run `npx prisma generate` to update the client.
-
-6.  **Run the Application (Development Mode)**
+5.  **Run the Application (Development Mode)**
 
     ```bash
     npm run dev
@@ -67,9 +57,7 @@ Follow these steps to get the project up and running on your local machine:
     The server will start, typically on `http://localhost:3000` (or the port you configured).
     The API documentation (Swagger) will be available at `http://localhost:3000/api-docs`.
 
-    **IMPORTANT**: Development mode uses `swc` for performance, which **does not** perform type checking. Run `npm run type-check` to check for TypeScript errors. Your IDE should also help catch these.
-
-7.  **Start the Order Worker**
+6.  **Start the Order Worker**
 
     In a separate terminal, start the order worker to process background tasks:
 
