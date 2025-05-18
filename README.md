@@ -26,14 +26,14 @@ Follow these steps to get the project up and running on your local machine:
 
 3.  **Set Up Environment Variables**
 
-    Create a `.env` file in the root of the project by copying the example file:
+    Create a `.env.development` file in ./config directory of the project by copying the example file:
 
     ```bash
     mkdir ./config
     cp .env.example ./config/.env.development
     ```
 
-    Update the `.env` file with the .env file provided to you by the team.
+    Update the `.env.development` file with the .env file provided to you by the team.
 
 4.  **Set Up Docker Container for RabbitMQ**
 
@@ -54,8 +54,8 @@ Follow these steps to get the project up and running on your local machine:
     ```bash
     npm run dev:hot
     ```
-    The server will start, typically on `http://localhost:3000` (or the port you configured).
-    The API documentation (Swagger) will be available at `http://localhost:3000/api-docs`.
+    The server will start, typically on `http://localhost:3010` (or the port you configured).
+    The API documentation (Swagger) will be available at `http://localhost:3010/api-docs`.
 
 6.  **Start the Order Worker**
 
@@ -67,4 +67,4 @@ Follow these steps to get the project up and running on your local machine:
 ## API Documentation
 
 Once the server is running, you can access the Swagger API documentation at:
-`http://localhost:<PORT>/api-docs` (e.g., `http://localhost:3000/api-docs`)
+`http://localhost:<PORT>/api-docs` (e.g., `http://localhost:3010/api-docs`)
