@@ -31,9 +31,10 @@ class OrderService {
     if (!orderData.items || orderData.items.length === 0) {
       throw new BadRequestError('Order must contain at least one item');
     }
-
+    
+    let totalAmount = 0;
     // First validate that all products exist and have sufficient stock
-    await Promise.all(orderData.items.map(async (item) => {
+    const orderItems =await Promise.all(orderData.items.map(async (item) => {
       const product = await this.productService.getById(item.productId);
       if (!product) {
         throw new NotFoundError(`Product with id ${item.productId} not found`);
@@ -41,12 +42,6 @@ class OrderService {
       if (product.stock < item.quantity) {
         throw new BadRequestError(`Insufficient stock for product '${product.name}'. Available: ${product.stock}, Requested: ${item.quantity}`);
       }
-    }));
-
-    let totalAmount = 0;
-
-    const orderItems = await Promise.all(orderData.items.map(async (item) => {
-      const product = await this.productService.getById(item.productId);
       totalAmount += product.price * item.quantity;
       return {
         productId: item.productId,
@@ -63,13 +58,6 @@ class OrderService {
 
     // Create the order
     const order = await this.orderRepo.create(orderRepoData);
-
-    // Now update the stock for each product
-    await Promise.all(orderData.items.map(async (item) => {
-      const product = await this.productService.getById(item.productId);
-      const newStock = product.stock - item.quantity;
-      await this.productService.updateStock(item.productId, newStock);
-    }));
 
     // Publish order created event to message queue for async processing
     await this.messageQueue.publishMessage(QueueName.ORDER_CREATED, JSON.stringify({
@@ -99,6 +87,14 @@ class OrderService {
     }
 
     return this.mapOrderToResponseDto(order);
+  }
+
+  public async getOrderByIdNoValidation(
+    orderId: string, 
+  ): Promise<OrderResponseDto> {
+    const order = await this.orderRepo.getById(orderId);
+
+    return this.mapOrderToResponseDto(order!);
   }
 
   public async getOrdersForUser(
@@ -142,15 +138,6 @@ class OrderService {
     
     if (!updatedOrder) {
       throw new NotFoundError('Order not found');
-    }
-    
-    // If the order is being cancelled, restore the stock
-    if (status === OrderStatus.CANCELLED && originalOrder.orderStatus !== OrderStatus.CANCELLED) {
-      await Promise.all(originalOrder.orderProducts.map(async (item) => {
-        const product = await this.productService.getById(item.productId);
-        const newStock = product.stock + item.quantity;
-        await this.productService.updateStock(item.productId, newStock);
-      }));
     }
 
     // Publish status change event to message queue for async processing

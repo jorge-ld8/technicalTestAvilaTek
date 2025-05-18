@@ -217,13 +217,11 @@ class OrderRepo implements IBaseRepository<IOrder, CreateOrderRepoDto, UpdateOrd
 
   async delete(id: string): Promise<boolean> {
     try {
-      // Soft delete the order
       await prisma.order.update({
         where: { id },
         data: { isDeleted: true },
       });
       
-      // Also soft delete all related order products
       await prisma.orderProduct.updateMany({
         where: { orderId: id },
         data: { isDeleted: true },

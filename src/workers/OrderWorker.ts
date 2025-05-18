@@ -90,18 +90,9 @@ class OrderWorker {
           JSON.stringify(inventoryMessage)
         );
       }));
-
-      // Additional async processing could be added here:
-      // - Send order confirmation email
-      // - Notify shipping department
-      // - Trigger analytics events
-      // - etc.
-
       console.log(`Successfully processed new order: ${orderId}`);
     } catch (error) {
       console.error(`Error processing new order ${orderId}:`, error);
-      // If inventory update fails, we might want to mark the order as problematic
-      // and trigger manual intervention
       await this.orderRepo.update(orderId, { orderStatus: OrderStatus.CANCELLED });
     }
   }
