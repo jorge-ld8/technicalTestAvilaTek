@@ -1,9 +1,10 @@
 import { Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
 import { AuthenticatedRequest, AuthenticatedUser, UserRole } from '@src/types/auth.d';
-import { AuthenticationError, AuthorizationError, ForbiddenError } from '@src/common/errors';
+import { AuthenticationError, ForbiddenError } from '@src/common/errors';
 import ENV from '@src/common/constants/ENV';
-import prismaInstance, { User } from '@src/common/prisma';
+import prismaInstance from '@src/common/prisma';
+import { isTokenBlacklisted } from '@src/services/AuthService';
 
 interface JwtPayload {
   id: string;
@@ -27,6 +28,11 @@ export const authenticate = async (
     
     if (!token) {
       return next(new AuthenticationError('Authentication required'));
+    }
+    
+    // Check if token is blacklisted
+    if (isTokenBlacklisted(token)) {
+      return next(new AuthenticationError('Token has been invalidated'));
     }
     
     try {

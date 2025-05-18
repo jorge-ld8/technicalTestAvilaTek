@@ -13,6 +13,8 @@ import
 import { PaginationParams } from '@src/types/common';
 import { PaginatedResult } from '@src/types/common';
 
+const tokenBlacklist = new Set<string>();
+
 class AuthService {
   private userRepo = new UserRepo();
 
@@ -62,6 +64,12 @@ class AuthService {
     return { user: userWithoutPassword, token };
   }
 
+  public logout(token?: string): void {
+    if (token) {
+      tokenBlacklist.add(token);
+    }
+  }
+
   private ensureJwtSecret(): void {
     if (!ENV.JwtSecret) {
       console.error('FATAL ERROR: JWT_SECRET is not defined');
@@ -87,5 +95,9 @@ class AuthService {
     return userWithoutPassword;
   }
 }
+
+export const isTokenBlacklisted = (token: string): boolean => {
+  return tokenBlacklist.has(token);
+};
 
 export default AuthService;

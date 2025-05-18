@@ -53,6 +53,31 @@ class AuthController {
       next(error);
     }
   }
+
+  public logout(req: AuthenticatedRequest, res: Response, next: NextFunction): void {
+    try {
+      if (!req.user) {
+        res.status(HttpStatusCodes.UNAUTHORIZED).json({ message: 'Authentication required' });
+        return;
+      }
+
+      const authHeader = req.headers.authorization;
+      let token: string | undefined;
+      
+      if (authHeader?.startsWith('Bearer ')) {
+        token = authHeader.split(' ')[1];
+      }
+
+      this.authService.logout(token);
+      
+      res.status(HttpStatusCodes.OK).json({
+        message: 'Logged out successfully',
+      });
+      
+    } catch (error) {
+      next(error);
+    }
+  }
 }
 
 export default AuthController;

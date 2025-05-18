@@ -210,6 +210,32 @@ class AuthRouter extends BaseRouter<AuthController> {
     this.router.get('/profile', 
       authenticate,
       (req, res, next) => this.controller.getProfile(req, res, next));
+
+    /**
+     * @swagger
+     * /auth/logout:
+     *   post:
+     *     summary: Logout the current user
+     *     tags: [Authentication]
+     *     security:
+     *       - bearerAuth: []
+     *     responses:
+     *       200:
+     *         description: User logged out successfully
+     *         content:
+     *           application/json:
+     *             schema:
+     *               type: object
+     *               properties:
+     *                 message:
+     *                   type: string
+     *                   example: "Logged out successfully"
+     *       401:
+     *         description: Unauthorized - Invalid or missing token
+     */
+    this.router.post('/logout',
+      authenticate,
+      (req, res, next) => this.controller.logout(req, res, next));
   }
 }
 
