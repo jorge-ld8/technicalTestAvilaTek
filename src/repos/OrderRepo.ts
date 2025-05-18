@@ -210,14 +210,6 @@ class OrderRepo implements IBaseRepository<IOrder, CreateOrderRepoDto, UpdateOrd
       throw error;
     }
   }
-
-  // Legacy method maintained for backward compatibility
-  async updateStatus(
-    orderId: string, 
-    status: OrderStatus,
-  ): Promise<IOrder | null> {
-    return this.update(orderId, { orderStatus: status });
-  }
 }
 
 export default OrderRepo; 

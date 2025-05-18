@@ -47,15 +47,23 @@ class ProductService {
     productsToUpdate.forEach(({ data }) => this.validateProductUpdate(data));
     
     // Keep track of which products were successfully updated
-    const existingProducts = new Set<string>();
+    // const existingProducts = new Set<string>();
+    const existingProducts = await this.productRepo.getAll();
+    const existingProductsIds = existingProducts.data.map(product => product.id);
     const allIds = productsToUpdate.map(p => p.id);
     
     // Filter to only include existing products
     const updatesForExistingProducts = productsToUpdate.filter(p => 
-      existingProducts.has(p.id),
+      existingProductsIds.includes(p.id),
     );
+
+    console.log('allIds');
+    console.log(allIds);
+
+    console.log('existingProductsIds');
+    console.log(existingProductsIds);
     
-    const notFoundIds = allIds.filter(id => !existingProducts.has(id));
+    const notFoundIds = allIds.filter(id => !existingProductsIds.includes(id));
     const updated = await this.productRepo.updateMany(updatesForExistingProducts);
     
     return {
