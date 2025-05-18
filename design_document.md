@@ -6,7 +6,7 @@ Este documento presenta las decisiones de diseño tomadas durante el desarrollo 
 
 ### Arquitectura General
 
-Adoptamos una arquitectura de capas bien definida para garantizar la separación de responsabilidades, siguiendo el patrón:
+Se adoptó una arquitectura de capas bien definida para garantizar la separación de responsabilidades, siguiendo el patrón:
 
 **Rutas → Controladores → Servicios → Repositorios → Base de Datos**
 
@@ -27,7 +27,7 @@ Se eligió Prisma ORM con PostgreSQL por:
 
 #### Procesamiento Asíncrono: RabbitMQ
 
-Implementamos RabbitMQ para:
+Se implementó colas de RabbitMQ para:
 - **Procesamiento asincrónico**: Las operaciones intensivas como actualización de inventario se ejecutan en segundo plano
 - **Desacoplamiento de servicios**: Reduce la dependencia entre componentes
 - **Extensible**: Actualmente solo se implementó para la actualización de inventario pero se puede realizar la integración con RabbitMQ para otros casos.
@@ -35,7 +35,7 @@ Implementamos RabbitMQ para:
 
 #### Seguridad
 
-Implementamos capas de seguridad:
+Se implementaron capas de seguridad:
 - **JWT para autenticación**: Tokens para gestionar sesiones de usuario
 - **CORS configurado**: Control de acceso para prevenir ataques cross-origin
 - **Autorización**: Se implementó Autorización basada en roles, en donde de acuerdo al rol del usuario puede o no acceder al endpoint (Por defecto todos los usuarios son Clientes).
