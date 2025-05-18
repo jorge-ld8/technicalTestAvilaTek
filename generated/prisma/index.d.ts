@@ -1253,6 +1253,7 @@ export namespace Prisma {
     role: string | null
     createdAt: Date | null
     updatedAt: Date | null
+    isDeleted: boolean | null
   }
 
   export type UserMaxAggregateOutputType = {
@@ -1264,6 +1265,7 @@ export namespace Prisma {
     role: string | null
     createdAt: Date | null
     updatedAt: Date | null
+    isDeleted: boolean | null
   }
 
   export type UserCountAggregateOutputType = {
@@ -1275,6 +1277,7 @@ export namespace Prisma {
     role: number
     createdAt: number
     updatedAt: number
+    isDeleted: number
     _all: number
   }
 
@@ -1288,6 +1291,7 @@ export namespace Prisma {
     role?: true
     createdAt?: true
     updatedAt?: true
+    isDeleted?: true
   }
 
   export type UserMaxAggregateInputType = {
@@ -1299,6 +1303,7 @@ export namespace Prisma {
     role?: true
     createdAt?: true
     updatedAt?: true
+    isDeleted?: true
   }
 
   export type UserCountAggregateInputType = {
@@ -1310,6 +1315,7 @@ export namespace Prisma {
     role?: true
     createdAt?: true
     updatedAt?: true
+    isDeleted?: true
     _all?: true
   }
 
@@ -1394,6 +1400,7 @@ export namespace Prisma {
     role: string
     createdAt: Date
     updatedAt: Date
+    isDeleted: boolean
     _count: UserCountAggregateOutputType | null
     _min: UserMinAggregateOutputType | null
     _max: UserMaxAggregateOutputType | null
@@ -1422,6 +1429,7 @@ export namespace Prisma {
     role?: boolean
     createdAt?: boolean
     updatedAt?: boolean
+    isDeleted?: boolean
     orders?: boolean | User$ordersArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["user"]>
@@ -1435,6 +1443,7 @@ export namespace Prisma {
     role?: boolean
     createdAt?: boolean
     updatedAt?: boolean
+    isDeleted?: boolean
   }, ExtArgs["result"]["user"]>
 
   export type UserSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -1446,6 +1455,7 @@ export namespace Prisma {
     role?: boolean
     createdAt?: boolean
     updatedAt?: boolean
+    isDeleted?: boolean
   }, ExtArgs["result"]["user"]>
 
   export type UserSelectScalar = {
@@ -1457,9 +1467,10 @@ export namespace Prisma {
     role?: boolean
     createdAt?: boolean
     updatedAt?: boolean
+    isDeleted?: boolean
   }
 
-  export type UserOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "firstName" | "lastName" | "email" | "password" | "role" | "createdAt" | "updatedAt", ExtArgs["result"]["user"]>
+  export type UserOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "firstName" | "lastName" | "email" | "password" | "role" | "createdAt" | "updatedAt" | "isDeleted", ExtArgs["result"]["user"]>
   export type UserInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     orders?: boolean | User$ordersArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
@@ -1481,6 +1492,7 @@ export namespace Prisma {
       role: string
       createdAt: Date
       updatedAt: Date
+      isDeleted: boolean
     }, ExtArgs["result"]["user"]>
     composites: {}
   }
@@ -1913,6 +1925,7 @@ export namespace Prisma {
     readonly role: FieldRef<"User", 'String'>
     readonly createdAt: FieldRef<"User", 'DateTime'>
     readonly updatedAt: FieldRef<"User", 'DateTime'>
+    readonly isDeleted: FieldRef<"User", 'Boolean'>
   }
     
 
@@ -2373,6 +2386,7 @@ export namespace Prisma {
     stock: number | null
     createdAt: Date | null
     updatedAt: Date | null
+    isDeleted: boolean | null
   }
 
   export type ProductMaxAggregateOutputType = {
@@ -2383,6 +2397,7 @@ export namespace Prisma {
     stock: number | null
     createdAt: Date | null
     updatedAt: Date | null
+    isDeleted: boolean | null
   }
 
   export type ProductCountAggregateOutputType = {
@@ -2393,6 +2408,7 @@ export namespace Prisma {
     stock: number
     createdAt: number
     updatedAt: number
+    isDeleted: number
     _all: number
   }
 
@@ -2415,6 +2431,7 @@ export namespace Prisma {
     stock?: true
     createdAt?: true
     updatedAt?: true
+    isDeleted?: true
   }
 
   export type ProductMaxAggregateInputType = {
@@ -2425,6 +2442,7 @@ export namespace Prisma {
     stock?: true
     createdAt?: true
     updatedAt?: true
+    isDeleted?: true
   }
 
   export type ProductCountAggregateInputType = {
@@ -2435,6 +2453,7 @@ export namespace Prisma {
     stock?: true
     createdAt?: true
     updatedAt?: true
+    isDeleted?: true
     _all?: true
   }
 
@@ -2532,6 +2551,7 @@ export namespace Prisma {
     stock: number
     createdAt: Date
     updatedAt: Date
+    isDeleted: boolean
     _count: ProductCountAggregateOutputType | null
     _avg: ProductAvgAggregateOutputType | null
     _sum: ProductSumAggregateOutputType | null
@@ -2561,6 +2581,7 @@ export namespace Prisma {
     stock?: boolean
     createdAt?: boolean
     updatedAt?: boolean
+    isDeleted?: boolean
     orderProducts?: boolean | Product$orderProductsArgs<ExtArgs>
     _count?: boolean | ProductCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["product"]>
@@ -2573,6 +2594,7 @@ export namespace Prisma {
     stock?: boolean
     createdAt?: boolean
     updatedAt?: boolean
+    isDeleted?: boolean
   }, ExtArgs["result"]["product"]>
 
   export type ProductSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -2583,6 +2605,7 @@ export namespace Prisma {
     stock?: boolean
     createdAt?: boolean
     updatedAt?: boolean
+    isDeleted?: boolean
   }, ExtArgs["result"]["product"]>
 
   export type ProductSelectScalar = {
@@ -2593,9 +2616,10 @@ export namespace Prisma {
     stock?: boolean
     createdAt?: boolean
     updatedAt?: boolean
+    isDeleted?: boolean
   }
 
-  export type ProductOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "description" | "price" | "stock" | "createdAt" | "updatedAt", ExtArgs["result"]["product"]>
+  export type ProductOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "description" | "price" | "stock" | "createdAt" | "updatedAt" | "isDeleted", ExtArgs["result"]["product"]>
   export type ProductInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     orderProducts?: boolean | Product$orderProductsArgs<ExtArgs>
     _count?: boolean | ProductCountOutputTypeDefaultArgs<ExtArgs>
@@ -2616,6 +2640,7 @@ export namespace Prisma {
       stock: number
       createdAt: Date
       updatedAt: Date
+      isDeleted: boolean
     }, ExtArgs["result"]["product"]>
     composites: {}
   }
@@ -3047,6 +3072,7 @@ export namespace Prisma {
     readonly stock: FieldRef<"Product", 'Int'>
     readonly createdAt: FieldRef<"Product", 'DateTime'>
     readonly updatedAt: FieldRef<"Product", 'DateTime'>
+    readonly isDeleted: FieldRef<"Product", 'Boolean'>
   }
     
 
@@ -3504,6 +3530,7 @@ export namespace Prisma {
     totalAmount: Decimal | null
     createdAt: Date | null
     updatedAt: Date | null
+    isDeleted: boolean | null
   }
 
   export type OrderMaxAggregateOutputType = {
@@ -3513,6 +3540,7 @@ export namespace Prisma {
     totalAmount: Decimal | null
     createdAt: Date | null
     updatedAt: Date | null
+    isDeleted: boolean | null
   }
 
   export type OrderCountAggregateOutputType = {
@@ -3522,6 +3550,7 @@ export namespace Prisma {
     totalAmount: number
     createdAt: number
     updatedAt: number
+    isDeleted: number
     _all: number
   }
 
@@ -3541,6 +3570,7 @@ export namespace Prisma {
     totalAmount?: true
     createdAt?: true
     updatedAt?: true
+    isDeleted?: true
   }
 
   export type OrderMaxAggregateInputType = {
@@ -3550,6 +3580,7 @@ export namespace Prisma {
     totalAmount?: true
     createdAt?: true
     updatedAt?: true
+    isDeleted?: true
   }
 
   export type OrderCountAggregateInputType = {
@@ -3559,6 +3590,7 @@ export namespace Prisma {
     totalAmount?: true
     createdAt?: true
     updatedAt?: true
+    isDeleted?: true
     _all?: true
   }
 
@@ -3655,6 +3687,7 @@ export namespace Prisma {
     totalAmount: Decimal | null
     createdAt: Date
     updatedAt: Date
+    isDeleted: boolean
     _count: OrderCountAggregateOutputType | null
     _avg: OrderAvgAggregateOutputType | null
     _sum: OrderSumAggregateOutputType | null
@@ -3683,6 +3716,7 @@ export namespace Prisma {
     totalAmount?: boolean
     createdAt?: boolean
     updatedAt?: boolean
+    isDeleted?: boolean
     user?: boolean | UserDefaultArgs<ExtArgs>
     orderProducts?: boolean | Order$orderProductsArgs<ExtArgs>
     _count?: boolean | OrderCountOutputTypeDefaultArgs<ExtArgs>
@@ -3695,6 +3729,7 @@ export namespace Prisma {
     totalAmount?: boolean
     createdAt?: boolean
     updatedAt?: boolean
+    isDeleted?: boolean
     user?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["order"]>
 
@@ -3705,6 +3740,7 @@ export namespace Prisma {
     totalAmount?: boolean
     createdAt?: boolean
     updatedAt?: boolean
+    isDeleted?: boolean
     user?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["order"]>
 
@@ -3715,9 +3751,10 @@ export namespace Prisma {
     totalAmount?: boolean
     createdAt?: boolean
     updatedAt?: boolean
+    isDeleted?: boolean
   }
 
-  export type OrderOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "userId" | "orderStatus" | "totalAmount" | "createdAt" | "updatedAt", ExtArgs["result"]["order"]>
+  export type OrderOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "userId" | "orderStatus" | "totalAmount" | "createdAt" | "updatedAt" | "isDeleted", ExtArgs["result"]["order"]>
   export type OrderInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     user?: boolean | UserDefaultArgs<ExtArgs>
     orderProducts?: boolean | Order$orderProductsArgs<ExtArgs>
@@ -3743,6 +3780,7 @@ export namespace Prisma {
       totalAmount: Prisma.Decimal | null
       createdAt: Date
       updatedAt: Date
+      isDeleted: boolean
     }, ExtArgs["result"]["order"]>
     composites: {}
   }
@@ -4174,6 +4212,7 @@ export namespace Prisma {
     readonly totalAmount: FieldRef<"Order", 'Decimal'>
     readonly createdAt: FieldRef<"Order", 'DateTime'>
     readonly updatedAt: FieldRef<"Order", 'DateTime'>
+    readonly isDeleted: FieldRef<"Order", 'Boolean'>
   }
     
 
@@ -4642,6 +4681,7 @@ export namespace Prisma {
     priceAtPurchase: Decimal | null
     createdAt: Date | null
     updatedAt: Date | null
+    isDeleted: boolean | null
   }
 
   export type OrderProductMaxAggregateOutputType = {
@@ -4652,6 +4692,7 @@ export namespace Prisma {
     priceAtPurchase: Decimal | null
     createdAt: Date | null
     updatedAt: Date | null
+    isDeleted: boolean | null
   }
 
   export type OrderProductCountAggregateOutputType = {
@@ -4662,6 +4703,7 @@ export namespace Prisma {
     priceAtPurchase: number
     createdAt: number
     updatedAt: number
+    isDeleted: number
     _all: number
   }
 
@@ -4684,6 +4726,7 @@ export namespace Prisma {
     priceAtPurchase?: true
     createdAt?: true
     updatedAt?: true
+    isDeleted?: true
   }
 
   export type OrderProductMaxAggregateInputType = {
@@ -4694,6 +4737,7 @@ export namespace Prisma {
     priceAtPurchase?: true
     createdAt?: true
     updatedAt?: true
+    isDeleted?: true
   }
 
   export type OrderProductCountAggregateInputType = {
@@ -4704,6 +4748,7 @@ export namespace Prisma {
     priceAtPurchase?: true
     createdAt?: true
     updatedAt?: true
+    isDeleted?: true
     _all?: true
   }
 
@@ -4801,6 +4846,7 @@ export namespace Prisma {
     priceAtPurchase: Decimal
     createdAt: Date
     updatedAt: Date
+    isDeleted: boolean
     _count: OrderProductCountAggregateOutputType | null
     _avg: OrderProductAvgAggregateOutputType | null
     _sum: OrderProductSumAggregateOutputType | null
@@ -4830,6 +4876,7 @@ export namespace Prisma {
     priceAtPurchase?: boolean
     createdAt?: boolean
     updatedAt?: boolean
+    isDeleted?: boolean
     order?: boolean | OrderDefaultArgs<ExtArgs>
     product?: boolean | ProductDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["orderProduct"]>
@@ -4842,6 +4889,7 @@ export namespace Prisma {
     priceAtPurchase?: boolean
     createdAt?: boolean
     updatedAt?: boolean
+    isDeleted?: boolean
     order?: boolean | OrderDefaultArgs<ExtArgs>
     product?: boolean | ProductDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["orderProduct"]>
@@ -4854,6 +4902,7 @@ export namespace Prisma {
     priceAtPurchase?: boolean
     createdAt?: boolean
     updatedAt?: boolean
+    isDeleted?: boolean
     order?: boolean | OrderDefaultArgs<ExtArgs>
     product?: boolean | ProductDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["orderProduct"]>
@@ -4866,9 +4915,10 @@ export namespace Prisma {
     priceAtPurchase?: boolean
     createdAt?: boolean
     updatedAt?: boolean
+    isDeleted?: boolean
   }
 
-  export type OrderProductOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "orderId" | "productId" | "quantity" | "priceAtPurchase" | "createdAt" | "updatedAt", ExtArgs["result"]["orderProduct"]>
+  export type OrderProductOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "orderId" | "productId" | "quantity" | "priceAtPurchase" | "createdAt" | "updatedAt" | "isDeleted", ExtArgs["result"]["orderProduct"]>
   export type OrderProductInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     order?: boolean | OrderDefaultArgs<ExtArgs>
     product?: boolean | ProductDefaultArgs<ExtArgs>
@@ -4896,6 +4946,7 @@ export namespace Prisma {
       priceAtPurchase: Prisma.Decimal
       createdAt: Date
       updatedAt: Date
+      isDeleted: boolean
     }, ExtArgs["result"]["orderProduct"]>
     composites: {}
   }
@@ -5328,6 +5379,7 @@ export namespace Prisma {
     readonly priceAtPurchase: FieldRef<"OrderProduct", 'Decimal'>
     readonly createdAt: FieldRef<"OrderProduct", 'DateTime'>
     readonly updatedAt: FieldRef<"OrderProduct", 'DateTime'>
+    readonly isDeleted: FieldRef<"OrderProduct", 'Boolean'>
   }
     
 
@@ -5764,7 +5816,8 @@ export namespace Prisma {
     password: 'password',
     role: 'role',
     createdAt: 'createdAt',
-    updatedAt: 'updatedAt'
+    updatedAt: 'updatedAt',
+    isDeleted: 'isDeleted'
   };
 
   export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof UserScalarFieldEnum]
@@ -5777,7 +5830,8 @@ export namespace Prisma {
     price: 'price',
     stock: 'stock',
     createdAt: 'createdAt',
-    updatedAt: 'updatedAt'
+    updatedAt: 'updatedAt',
+    isDeleted: 'isDeleted'
   };
 
   export type ProductScalarFieldEnum = (typeof ProductScalarFieldEnum)[keyof typeof ProductScalarFieldEnum]
@@ -5789,7 +5843,8 @@ export namespace Prisma {
     orderStatus: 'orderStatus',
     totalAmount: 'totalAmount',
     createdAt: 'createdAt',
-    updatedAt: 'updatedAt'
+    updatedAt: 'updatedAt',
+    isDeleted: 'isDeleted'
   };
 
   export type OrderScalarFieldEnum = (typeof OrderScalarFieldEnum)[keyof typeof OrderScalarFieldEnum]
@@ -5802,7 +5857,8 @@ export namespace Prisma {
     quantity: 'quantity',
     priceAtPurchase: 'priceAtPurchase',
     createdAt: 'createdAt',
-    updatedAt: 'updatedAt'
+    updatedAt: 'updatedAt',
+    isDeleted: 'isDeleted'
   };
 
   export type OrderProductScalarFieldEnum = (typeof OrderProductScalarFieldEnum)[keyof typeof OrderProductScalarFieldEnum]
@@ -5866,6 +5922,13 @@ export namespace Prisma {
 
 
   /**
+   * Reference to a field of type 'Boolean'
+   */
+  export type BooleanFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Boolean'>
+    
+
+
+  /**
    * Reference to a field of type 'Decimal'
    */
   export type DecimalFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Decimal'>
@@ -5922,6 +5985,7 @@ export namespace Prisma {
     role?: StringFilter<"User"> | string
     createdAt?: DateTimeFilter<"User"> | Date | string
     updatedAt?: DateTimeFilter<"User"> | Date | string
+    isDeleted?: BoolFilter<"User"> | boolean
     orders?: OrderListRelationFilter
   }
 
@@ -5934,6 +5998,7 @@ export namespace Prisma {
     role?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+    isDeleted?: SortOrder
     orders?: OrderOrderByRelationAggregateInput
   }
 
@@ -5949,6 +6014,7 @@ export namespace Prisma {
     role?: StringFilter<"User"> | string
     createdAt?: DateTimeFilter<"User"> | Date | string
     updatedAt?: DateTimeFilter<"User"> | Date | string
+    isDeleted?: BoolFilter<"User"> | boolean
     orders?: OrderListRelationFilter
   }, "id" | "email">
 
@@ -5961,6 +6027,7 @@ export namespace Prisma {
     role?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+    isDeleted?: SortOrder
     _count?: UserCountOrderByAggregateInput
     _max?: UserMaxOrderByAggregateInput
     _min?: UserMinOrderByAggregateInput
@@ -5978,6 +6045,7 @@ export namespace Prisma {
     role?: StringWithAggregatesFilter<"User"> | string
     createdAt?: DateTimeWithAggregatesFilter<"User"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"User"> | Date | string
+    isDeleted?: BoolWithAggregatesFilter<"User"> | boolean
   }
 
   export type ProductWhereInput = {
@@ -5991,6 +6059,7 @@ export namespace Prisma {
     stock?: IntFilter<"Product"> | number
     createdAt?: DateTimeFilter<"Product"> | Date | string
     updatedAt?: DateTimeFilter<"Product"> | Date | string
+    isDeleted?: BoolFilter<"Product"> | boolean
     orderProducts?: OrderProductListRelationFilter
   }
 
@@ -6002,6 +6071,7 @@ export namespace Prisma {
     stock?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+    isDeleted?: SortOrder
     orderProducts?: OrderProductOrderByRelationAggregateInput
   }
 
@@ -6016,6 +6086,7 @@ export namespace Prisma {
     stock?: IntFilter<"Product"> | number
     createdAt?: DateTimeFilter<"Product"> | Date | string
     updatedAt?: DateTimeFilter<"Product"> | Date | string
+    isDeleted?: BoolFilter<"Product"> | boolean
     orderProducts?: OrderProductListRelationFilter
   }, "id">
 
@@ -6027,6 +6098,7 @@ export namespace Prisma {
     stock?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+    isDeleted?: SortOrder
     _count?: ProductCountOrderByAggregateInput
     _avg?: ProductAvgOrderByAggregateInput
     _max?: ProductMaxOrderByAggregateInput
@@ -6045,6 +6117,7 @@ export namespace Prisma {
     stock?: IntWithAggregatesFilter<"Product"> | number
     createdAt?: DateTimeWithAggregatesFilter<"Product"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"Product"> | Date | string
+    isDeleted?: BoolWithAggregatesFilter<"Product"> | boolean
   }
 
   export type OrderWhereInput = {
@@ -6057,6 +6130,7 @@ export namespace Prisma {
     totalAmount?: DecimalNullableFilter<"Order"> | Decimal | DecimalJsLike | number | string | null
     createdAt?: DateTimeFilter<"Order"> | Date | string
     updatedAt?: DateTimeFilter<"Order"> | Date | string
+    isDeleted?: BoolFilter<"Order"> | boolean
     user?: XOR<UserScalarRelationFilter, UserWhereInput>
     orderProducts?: OrderProductListRelationFilter
   }
@@ -6068,6 +6142,7 @@ export namespace Prisma {
     totalAmount?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+    isDeleted?: SortOrder
     user?: UserOrderByWithRelationInput
     orderProducts?: OrderProductOrderByRelationAggregateInput
   }
@@ -6082,6 +6157,7 @@ export namespace Prisma {
     totalAmount?: DecimalNullableFilter<"Order"> | Decimal | DecimalJsLike | number | string | null
     createdAt?: DateTimeFilter<"Order"> | Date | string
     updatedAt?: DateTimeFilter<"Order"> | Date | string
+    isDeleted?: BoolFilter<"Order"> | boolean
     user?: XOR<UserScalarRelationFilter, UserWhereInput>
     orderProducts?: OrderProductListRelationFilter
   }, "id">
@@ -6093,6 +6169,7 @@ export namespace Prisma {
     totalAmount?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+    isDeleted?: SortOrder
     _count?: OrderCountOrderByAggregateInput
     _avg?: OrderAvgOrderByAggregateInput
     _max?: OrderMaxOrderByAggregateInput
@@ -6110,6 +6187,7 @@ export namespace Prisma {
     totalAmount?: DecimalNullableWithAggregatesFilter<"Order"> | Decimal | DecimalJsLike | number | string | null
     createdAt?: DateTimeWithAggregatesFilter<"Order"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"Order"> | Date | string
+    isDeleted?: BoolWithAggregatesFilter<"Order"> | boolean
   }
 
   export type OrderProductWhereInput = {
@@ -6123,6 +6201,7 @@ export namespace Prisma {
     priceAtPurchase?: DecimalFilter<"OrderProduct"> | Decimal | DecimalJsLike | number | string
     createdAt?: DateTimeFilter<"OrderProduct"> | Date | string
     updatedAt?: DateTimeFilter<"OrderProduct"> | Date | string
+    isDeleted?: BoolFilter<"OrderProduct"> | boolean
     order?: XOR<OrderScalarRelationFilter, OrderWhereInput>
     product?: XOR<ProductScalarRelationFilter, ProductWhereInput>
   }
@@ -6135,6 +6214,7 @@ export namespace Prisma {
     priceAtPurchase?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+    isDeleted?: SortOrder
     order?: OrderOrderByWithRelationInput
     product?: ProductOrderByWithRelationInput
   }
@@ -6151,6 +6231,7 @@ export namespace Prisma {
     priceAtPurchase?: DecimalFilter<"OrderProduct"> | Decimal | DecimalJsLike | number | string
     createdAt?: DateTimeFilter<"OrderProduct"> | Date | string
     updatedAt?: DateTimeFilter<"OrderProduct"> | Date | string
+    isDeleted?: BoolFilter<"OrderProduct"> | boolean
     order?: XOR<OrderScalarRelationFilter, OrderWhereInput>
     product?: XOR<ProductScalarRelationFilter, ProductWhereInput>
   }, "id" | "orderId_productId">
@@ -6163,6 +6244,7 @@ export namespace Prisma {
     priceAtPurchase?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+    isDeleted?: SortOrder
     _count?: OrderProductCountOrderByAggregateInput
     _avg?: OrderProductAvgOrderByAggregateInput
     _max?: OrderProductMaxOrderByAggregateInput
@@ -6181,6 +6263,7 @@ export namespace Prisma {
     priceAtPurchase?: DecimalWithAggregatesFilter<"OrderProduct"> | Decimal | DecimalJsLike | number | string
     createdAt?: DateTimeWithAggregatesFilter<"OrderProduct"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"OrderProduct"> | Date | string
+    isDeleted?: BoolWithAggregatesFilter<"OrderProduct"> | boolean
   }
 
   export type UserCreateInput = {
@@ -6192,6 +6275,7 @@ export namespace Prisma {
     role?: string
     createdAt?: Date | string
     updatedAt?: Date | string
+    isDeleted?: boolean
     orders?: OrderCreateNestedManyWithoutUserInput
   }
 
@@ -6204,6 +6288,7 @@ export namespace Prisma {
     role?: string
     createdAt?: Date | string
     updatedAt?: Date | string
+    isDeleted?: boolean
     orders?: OrderUncheckedCreateNestedManyWithoutUserInput
   }
 
@@ -6216,6 +6301,7 @@ export namespace Prisma {
     role?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    isDeleted?: BoolFieldUpdateOperationsInput | boolean
     orders?: OrderUpdateManyWithoutUserNestedInput
   }
 
@@ -6228,6 +6314,7 @@ export namespace Prisma {
     role?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    isDeleted?: BoolFieldUpdateOperationsInput | boolean
     orders?: OrderUncheckedUpdateManyWithoutUserNestedInput
   }
 
@@ -6240,6 +6327,7 @@ export namespace Prisma {
     role?: string
     createdAt?: Date | string
     updatedAt?: Date | string
+    isDeleted?: boolean
   }
 
   export type UserUpdateManyMutationInput = {
@@ -6251,6 +6339,7 @@ export namespace Prisma {
     role?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    isDeleted?: BoolFieldUpdateOperationsInput | boolean
   }
 
   export type UserUncheckedUpdateManyInput = {
@@ -6262,6 +6351,7 @@ export namespace Prisma {
     role?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    isDeleted?: BoolFieldUpdateOperationsInput | boolean
   }
 
   export type ProductCreateInput = {
@@ -6272,6 +6362,7 @@ export namespace Prisma {
     stock?: number
     createdAt?: Date | string
     updatedAt?: Date | string
+    isDeleted?: boolean
     orderProducts?: OrderProductCreateNestedManyWithoutProductInput
   }
 
@@ -6283,6 +6374,7 @@ export namespace Prisma {
     stock?: number
     createdAt?: Date | string
     updatedAt?: Date | string
+    isDeleted?: boolean
     orderProducts?: OrderProductUncheckedCreateNestedManyWithoutProductInput
   }
 
@@ -6294,6 +6386,7 @@ export namespace Prisma {
     stock?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    isDeleted?: BoolFieldUpdateOperationsInput | boolean
     orderProducts?: OrderProductUpdateManyWithoutProductNestedInput
   }
 
@@ -6305,6 +6398,7 @@ export namespace Prisma {
     stock?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    isDeleted?: BoolFieldUpdateOperationsInput | boolean
     orderProducts?: OrderProductUncheckedUpdateManyWithoutProductNestedInput
   }
 
@@ -6316,6 +6410,7 @@ export namespace Prisma {
     stock?: number
     createdAt?: Date | string
     updatedAt?: Date | string
+    isDeleted?: boolean
   }
 
   export type ProductUpdateManyMutationInput = {
@@ -6326,6 +6421,7 @@ export namespace Prisma {
     stock?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    isDeleted?: BoolFieldUpdateOperationsInput | boolean
   }
 
   export type ProductUncheckedUpdateManyInput = {
@@ -6336,6 +6432,7 @@ export namespace Prisma {
     stock?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    isDeleted?: BoolFieldUpdateOperationsInput | boolean
   }
 
   export type OrderCreateInput = {
@@ -6344,6 +6441,7 @@ export namespace Prisma {
     totalAmount?: Decimal | DecimalJsLike | number | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
+    isDeleted?: boolean
     user: UserCreateNestedOneWithoutOrdersInput
     orderProducts?: OrderProductCreateNestedManyWithoutOrderInput
   }
@@ -6355,6 +6453,7 @@ export namespace Prisma {
     totalAmount?: Decimal | DecimalJsLike | number | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
+    isDeleted?: boolean
     orderProducts?: OrderProductUncheckedCreateNestedManyWithoutOrderInput
   }
 
@@ -6364,6 +6463,7 @@ export namespace Prisma {
     totalAmount?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    isDeleted?: BoolFieldUpdateOperationsInput | boolean
     user?: UserUpdateOneRequiredWithoutOrdersNestedInput
     orderProducts?: OrderProductUpdateManyWithoutOrderNestedInput
   }
@@ -6375,6 +6475,7 @@ export namespace Prisma {
     totalAmount?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    isDeleted?: BoolFieldUpdateOperationsInput | boolean
     orderProducts?: OrderProductUncheckedUpdateManyWithoutOrderNestedInput
   }
 
@@ -6385,6 +6486,7 @@ export namespace Prisma {
     totalAmount?: Decimal | DecimalJsLike | number | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
+    isDeleted?: boolean
   }
 
   export type OrderUpdateManyMutationInput = {
@@ -6393,6 +6495,7 @@ export namespace Prisma {
     totalAmount?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    isDeleted?: BoolFieldUpdateOperationsInput | boolean
   }
 
   export type OrderUncheckedUpdateManyInput = {
@@ -6402,6 +6505,7 @@ export namespace Prisma {
     totalAmount?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    isDeleted?: BoolFieldUpdateOperationsInput | boolean
   }
 
   export type OrderProductCreateInput = {
@@ -6410,6 +6514,7 @@ export namespace Prisma {
     priceAtPurchase: Decimal | DecimalJsLike | number | string
     createdAt?: Date | string
     updatedAt?: Date | string
+    isDeleted?: boolean
     order: OrderCreateNestedOneWithoutOrderProductsInput
     product: ProductCreateNestedOneWithoutOrderProductsInput
   }
@@ -6422,6 +6527,7 @@ export namespace Prisma {
     priceAtPurchase: Decimal | DecimalJsLike | number | string
     createdAt?: Date | string
     updatedAt?: Date | string
+    isDeleted?: boolean
   }
 
   export type OrderProductUpdateInput = {
@@ -6430,6 +6536,7 @@ export namespace Prisma {
     priceAtPurchase?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    isDeleted?: BoolFieldUpdateOperationsInput | boolean
     order?: OrderUpdateOneRequiredWithoutOrderProductsNestedInput
     product?: ProductUpdateOneRequiredWithoutOrderProductsNestedInput
   }
@@ -6442,6 +6549,7 @@ export namespace Prisma {
     priceAtPurchase?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    isDeleted?: BoolFieldUpdateOperationsInput | boolean
   }
 
   export type OrderProductCreateManyInput = {
@@ -6452,6 +6560,7 @@ export namespace Prisma {
     priceAtPurchase: Decimal | DecimalJsLike | number | string
     createdAt?: Date | string
     updatedAt?: Date | string
+    isDeleted?: boolean
   }
 
   export type OrderProductUpdateManyMutationInput = {
@@ -6460,6 +6569,7 @@ export namespace Prisma {
     priceAtPurchase?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    isDeleted?: BoolFieldUpdateOperationsInput | boolean
   }
 
   export type OrderProductUncheckedUpdateManyInput = {
@@ -6470,6 +6580,7 @@ export namespace Prisma {
     priceAtPurchase?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    isDeleted?: BoolFieldUpdateOperationsInput | boolean
   }
 
   export type StringFilter<$PrismaModel = never> = {
@@ -6498,6 +6609,11 @@ export namespace Prisma {
     not?: NestedDateTimeFilter<$PrismaModel> | Date | string
   }
 
+  export type BoolFilter<$PrismaModel = never> = {
+    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
+    not?: NestedBoolFilter<$PrismaModel> | boolean
+  }
+
   export type OrderListRelationFilter = {
     every?: OrderWhereInput
     some?: OrderWhereInput
@@ -6517,6 +6633,7 @@ export namespace Prisma {
     role?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+    isDeleted?: SortOrder
   }
 
   export type UserMaxOrderByAggregateInput = {
@@ -6528,6 +6645,7 @@ export namespace Prisma {
     role?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+    isDeleted?: SortOrder
   }
 
   export type UserMinOrderByAggregateInput = {
@@ -6539,6 +6657,7 @@ export namespace Prisma {
     role?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+    isDeleted?: SortOrder
   }
 
   export type StringWithAggregatesFilter<$PrismaModel = never> = {
@@ -6571,6 +6690,14 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedDateTimeFilter<$PrismaModel>
     _max?: NestedDateTimeFilter<$PrismaModel>
+  }
+
+  export type BoolWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
+    not?: NestedBoolWithAggregatesFilter<$PrismaModel> | boolean
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedBoolFilter<$PrismaModel>
+    _max?: NestedBoolFilter<$PrismaModel>
   }
 
   export type StringNullableFilter<$PrismaModel = never> = {
@@ -6633,6 +6760,7 @@ export namespace Prisma {
     stock?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+    isDeleted?: SortOrder
   }
 
   export type ProductAvgOrderByAggregateInput = {
@@ -6648,6 +6776,7 @@ export namespace Prisma {
     stock?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+    isDeleted?: SortOrder
   }
 
   export type ProductMinOrderByAggregateInput = {
@@ -6658,6 +6787,7 @@ export namespace Prisma {
     stock?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+    isDeleted?: SortOrder
   }
 
   export type ProductSumOrderByAggregateInput = {
@@ -6738,6 +6868,7 @@ export namespace Prisma {
     totalAmount?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+    isDeleted?: SortOrder
   }
 
   export type OrderAvgOrderByAggregateInput = {
@@ -6751,6 +6882,7 @@ export namespace Prisma {
     totalAmount?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+    isDeleted?: SortOrder
   }
 
   export type OrderMinOrderByAggregateInput = {
@@ -6760,6 +6892,7 @@ export namespace Prisma {
     totalAmount?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+    isDeleted?: SortOrder
   }
 
   export type OrderSumOrderByAggregateInput = {
@@ -6805,6 +6938,7 @@ export namespace Prisma {
     priceAtPurchase?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+    isDeleted?: SortOrder
   }
 
   export type OrderProductAvgOrderByAggregateInput = {
@@ -6820,6 +6954,7 @@ export namespace Prisma {
     priceAtPurchase?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+    isDeleted?: SortOrder
   }
 
   export type OrderProductMinOrderByAggregateInput = {
@@ -6830,6 +6965,7 @@ export namespace Prisma {
     priceAtPurchase?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+    isDeleted?: SortOrder
   }
 
   export type OrderProductSumOrderByAggregateInput = {
@@ -6857,6 +6993,10 @@ export namespace Prisma {
 
   export type DateTimeFieldUpdateOperationsInput = {
     set?: Date | string
+  }
+
+  export type BoolFieldUpdateOperationsInput = {
+    set?: boolean
   }
 
   export type OrderUpdateManyWithoutUserNestedInput = {
@@ -7066,6 +7206,11 @@ export namespace Prisma {
     not?: NestedDateTimeFilter<$PrismaModel> | Date | string
   }
 
+  export type NestedBoolFilter<$PrismaModel = never> = {
+    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
+    not?: NestedBoolFilter<$PrismaModel> | boolean
+  }
+
   export type NestedStringWithAggregatesFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel>
     in?: string[] | ListStringFieldRefInput<$PrismaModel>
@@ -7106,6 +7251,14 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedDateTimeFilter<$PrismaModel>
     _max?: NestedDateTimeFilter<$PrismaModel>
+  }
+
+  export type NestedBoolWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
+    not?: NestedBoolWithAggregatesFilter<$PrismaModel> | boolean
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedBoolFilter<$PrismaModel>
+    _max?: NestedBoolFilter<$PrismaModel>
   }
 
   export type NestedStringNullableFilter<$PrismaModel = never> = {
@@ -7237,6 +7390,7 @@ export namespace Prisma {
     totalAmount?: Decimal | DecimalJsLike | number | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
+    isDeleted?: boolean
     orderProducts?: OrderProductCreateNestedManyWithoutOrderInput
   }
 
@@ -7246,6 +7400,7 @@ export namespace Prisma {
     totalAmount?: Decimal | DecimalJsLike | number | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
+    isDeleted?: boolean
     orderProducts?: OrderProductUncheckedCreateNestedManyWithoutOrderInput
   }
 
@@ -7285,6 +7440,7 @@ export namespace Prisma {
     totalAmount?: DecimalNullableFilter<"Order"> | Decimal | DecimalJsLike | number | string | null
     createdAt?: DateTimeFilter<"Order"> | Date | string
     updatedAt?: DateTimeFilter<"Order"> | Date | string
+    isDeleted?: BoolFilter<"Order"> | boolean
   }
 
   export type OrderProductCreateWithoutProductInput = {
@@ -7293,6 +7449,7 @@ export namespace Prisma {
     priceAtPurchase: Decimal | DecimalJsLike | number | string
     createdAt?: Date | string
     updatedAt?: Date | string
+    isDeleted?: boolean
     order: OrderCreateNestedOneWithoutOrderProductsInput
   }
 
@@ -7303,6 +7460,7 @@ export namespace Prisma {
     priceAtPurchase: Decimal | DecimalJsLike | number | string
     createdAt?: Date | string
     updatedAt?: Date | string
+    isDeleted?: boolean
   }
 
   export type OrderProductCreateOrConnectWithoutProductInput = {
@@ -7342,6 +7500,7 @@ export namespace Prisma {
     priceAtPurchase?: DecimalFilter<"OrderProduct"> | Decimal | DecimalJsLike | number | string
     createdAt?: DateTimeFilter<"OrderProduct"> | Date | string
     updatedAt?: DateTimeFilter<"OrderProduct"> | Date | string
+    isDeleted?: BoolFilter<"OrderProduct"> | boolean
   }
 
   export type UserCreateWithoutOrdersInput = {
@@ -7353,6 +7512,7 @@ export namespace Prisma {
     role?: string
     createdAt?: Date | string
     updatedAt?: Date | string
+    isDeleted?: boolean
   }
 
   export type UserUncheckedCreateWithoutOrdersInput = {
@@ -7364,6 +7524,7 @@ export namespace Prisma {
     role?: string
     createdAt?: Date | string
     updatedAt?: Date | string
+    isDeleted?: boolean
   }
 
   export type UserCreateOrConnectWithoutOrdersInput = {
@@ -7377,6 +7538,7 @@ export namespace Prisma {
     priceAtPurchase: Decimal | DecimalJsLike | number | string
     createdAt?: Date | string
     updatedAt?: Date | string
+    isDeleted?: boolean
     product: ProductCreateNestedOneWithoutOrderProductsInput
   }
 
@@ -7387,6 +7549,7 @@ export namespace Prisma {
     priceAtPurchase: Decimal | DecimalJsLike | number | string
     createdAt?: Date | string
     updatedAt?: Date | string
+    isDeleted?: boolean
   }
 
   export type OrderProductCreateOrConnectWithoutOrderInput = {
@@ -7419,6 +7582,7 @@ export namespace Prisma {
     role?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    isDeleted?: BoolFieldUpdateOperationsInput | boolean
   }
 
   export type UserUncheckedUpdateWithoutOrdersInput = {
@@ -7430,6 +7594,7 @@ export namespace Prisma {
     role?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    isDeleted?: BoolFieldUpdateOperationsInput | boolean
   }
 
   export type OrderProductUpsertWithWhereUniqueWithoutOrderInput = {
@@ -7454,6 +7619,7 @@ export namespace Prisma {
     totalAmount?: Decimal | DecimalJsLike | number | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
+    isDeleted?: boolean
     user: UserCreateNestedOneWithoutOrdersInput
   }
 
@@ -7464,6 +7630,7 @@ export namespace Prisma {
     totalAmount?: Decimal | DecimalJsLike | number | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
+    isDeleted?: boolean
   }
 
   export type OrderCreateOrConnectWithoutOrderProductsInput = {
@@ -7479,6 +7646,7 @@ export namespace Prisma {
     stock?: number
     createdAt?: Date | string
     updatedAt?: Date | string
+    isDeleted?: boolean
   }
 
   export type ProductUncheckedCreateWithoutOrderProductsInput = {
@@ -7489,6 +7657,7 @@ export namespace Prisma {
     stock?: number
     createdAt?: Date | string
     updatedAt?: Date | string
+    isDeleted?: boolean
   }
 
   export type ProductCreateOrConnectWithoutOrderProductsInput = {
@@ -7513,6 +7682,7 @@ export namespace Prisma {
     totalAmount?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    isDeleted?: BoolFieldUpdateOperationsInput | boolean
     user?: UserUpdateOneRequiredWithoutOrdersNestedInput
   }
 
@@ -7523,6 +7693,7 @@ export namespace Prisma {
     totalAmount?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    isDeleted?: BoolFieldUpdateOperationsInput | boolean
   }
 
   export type ProductUpsertWithoutOrderProductsInput = {
@@ -7544,6 +7715,7 @@ export namespace Prisma {
     stock?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    isDeleted?: BoolFieldUpdateOperationsInput | boolean
   }
 
   export type ProductUncheckedUpdateWithoutOrderProductsInput = {
@@ -7554,6 +7726,7 @@ export namespace Prisma {
     stock?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    isDeleted?: BoolFieldUpdateOperationsInput | boolean
   }
 
   export type OrderCreateManyUserInput = {
@@ -7562,6 +7735,7 @@ export namespace Prisma {
     totalAmount?: Decimal | DecimalJsLike | number | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
+    isDeleted?: boolean
   }
 
   export type OrderUpdateWithoutUserInput = {
@@ -7570,6 +7744,7 @@ export namespace Prisma {
     totalAmount?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    isDeleted?: BoolFieldUpdateOperationsInput | boolean
     orderProducts?: OrderProductUpdateManyWithoutOrderNestedInput
   }
 
@@ -7579,6 +7754,7 @@ export namespace Prisma {
     totalAmount?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    isDeleted?: BoolFieldUpdateOperationsInput | boolean
     orderProducts?: OrderProductUncheckedUpdateManyWithoutOrderNestedInput
   }
 
@@ -7588,6 +7764,7 @@ export namespace Prisma {
     totalAmount?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    isDeleted?: BoolFieldUpdateOperationsInput | boolean
   }
 
   export type OrderProductCreateManyProductInput = {
@@ -7597,6 +7774,7 @@ export namespace Prisma {
     priceAtPurchase: Decimal | DecimalJsLike | number | string
     createdAt?: Date | string
     updatedAt?: Date | string
+    isDeleted?: boolean
   }
 
   export type OrderProductUpdateWithoutProductInput = {
@@ -7605,6 +7783,7 @@ export namespace Prisma {
     priceAtPurchase?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    isDeleted?: BoolFieldUpdateOperationsInput | boolean
     order?: OrderUpdateOneRequiredWithoutOrderProductsNestedInput
   }
 
@@ -7615,6 +7794,7 @@ export namespace Prisma {
     priceAtPurchase?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    isDeleted?: BoolFieldUpdateOperationsInput | boolean
   }
 
   export type OrderProductUncheckedUpdateManyWithoutProductInput = {
@@ -7624,6 +7804,7 @@ export namespace Prisma {
     priceAtPurchase?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    isDeleted?: BoolFieldUpdateOperationsInput | boolean
   }
 
   export type OrderProductCreateManyOrderInput = {
@@ -7633,6 +7814,7 @@ export namespace Prisma {
     priceAtPurchase: Decimal | DecimalJsLike | number | string
     createdAt?: Date | string
     updatedAt?: Date | string
+    isDeleted?: boolean
   }
 
   export type OrderProductUpdateWithoutOrderInput = {
@@ -7641,6 +7823,7 @@ export namespace Prisma {
     priceAtPurchase?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    isDeleted?: BoolFieldUpdateOperationsInput | boolean
     product?: ProductUpdateOneRequiredWithoutOrderProductsNestedInput
   }
 
@@ -7651,6 +7834,7 @@ export namespace Prisma {
     priceAtPurchase?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    isDeleted?: BoolFieldUpdateOperationsInput | boolean
   }
 
   export type OrderProductUncheckedUpdateManyWithoutOrderInput = {
@@ -7660,6 +7844,7 @@ export namespace Prisma {
     priceAtPurchase?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    isDeleted?: BoolFieldUpdateOperationsInput | boolean
   }
 
 

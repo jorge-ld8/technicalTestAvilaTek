@@ -18,6 +18,7 @@ model User {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   orders    Order[]
+  isDeleted Boolean  @default(false)
 
   @@map("users")
 }
@@ -30,6 +31,7 @@ model Product {
   stock         Int            @default(0) @map("stock")
   createdAt     DateTime       @default(now())
   updatedAt     DateTime       @updatedAt
+  isDeleted     Boolean        @default(false)
   orderProducts OrderProduct[]
 
   @@map("products")
@@ -44,6 +46,7 @@ model Order {
   createdAt     DateTime       @default(now())
   updatedAt     DateTime       @updatedAt
   orderProducts OrderProduct[]
+  isDeleted     Boolean        @default(false)
 
   @@map("orders")
 }
@@ -58,6 +61,7 @@ model OrderProduct {
   priceAtPurchase Decimal  @map("price_at_purchase") @db.Decimal(10, 2) // Price of the product when the order was made
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
+  isDeleted       Boolean  @default(false)
 
   @@unique([orderId, productId]) // Optional: Ensures a product appears only once per order directly
   // If a product can be added multiple times (e.g. as separate lines), remove this.

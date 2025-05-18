@@ -44,11 +44,13 @@ class OrderRepo implements IBaseRepository<IOrder, CreateOrderRepoDto, UpdateOrd
       data: {
         userId,
         totalAmount,
+        isDeleted: false,
         orderProducts: {
           create: items.map(item => ({
             productId: item.productId,
             quantity: item.quantity,
             priceAtPurchase: item.priceAtPurchase,
+            isDeleted: false,
           })),
         },
       },
@@ -70,10 +72,14 @@ class OrderRepo implements IBaseRepository<IOrder, CreateOrderRepoDto, UpdateOrd
   }
 
   async getById(orderId: string): Promise<IOrder | null> {
-    const order = await prisma.order.findUnique({
-      where: { id: orderId },
+    const order = await prisma.order.findFirst({
+      where: { 
+        id: orderId,
+        isDeleted: false,
+      },
       include: {
         orderProducts: {
+          where: { isDeleted: false },
           include: {
             product: {
               select: {
@@ -99,9 +105,13 @@ class OrderRepo implements IBaseRepository<IOrder, CreateOrderRepoDto, UpdateOrd
     
     const [orders, totalCount] = await Promise.all([
       prisma.order.findMany({
-        where: { userId },
+        where: { 
+          userId,
+          isDeleted: false,
+        },
         include: {
           orderProducts: {
+            where: { isDeleted: false },
             include: {
               product: {
                 select: {
@@ -117,7 +127,10 @@ class OrderRepo implements IBaseRepository<IOrder, CreateOrderRepoDto, UpdateOrd
         orderBy: { createdAt: 'desc' }
       }),
       prisma.order.count({
-        where: { userId },
+        where: { 
+          userId,
+          isDeleted: false,
+        },
       }),
     ]);
     
@@ -138,8 +151,10 @@ class OrderRepo implements IBaseRepository<IOrder, CreateOrderRepoDto, UpdateOrd
     
     const [orders, totalCount] = await Promise.all([
       prisma.order.findMany({
+        where: { isDeleted: false },
         include: {
           orderProducts: {
+            where: { isDeleted: false },
             include: {
               product: {
                 select: {
@@ -154,7 +169,9 @@ class OrderRepo implements IBaseRepository<IOrder, CreateOrderRepoDto, UpdateOrd
         take: pageSize,
         orderBy: { createdAt: 'desc' }
       }),
-      prisma.order.count(),
+      prisma.order.count({
+        where: { isDeleted: false },
+      }),
     ]);
     
     return createPaginatedResult(
@@ -176,16 +193,17 @@ class OrderRepo implements IBaseRepository<IOrder, CreateOrderRepoDto, UpdateOrd
         },
         include: {
           orderProducts: {
+            where: { isDeleted: false },
             include: {
               product: {
                 select: {
                   name: true,
-                  description: true
-                }
-              }
-            }
-          }
-        }
+                  description: true,
+                },
+              },
+            },
+          },
+        },
       });
       
       return mapPrismaOrderToIOrder(order);
@@ -199,9 +217,18 @@ class OrderRepo implements IBaseRepository<IOrder, CreateOrderRepoDto, UpdateOrd
 
   async delete(id: string): Promise<boolean> {
     try {
-      await prisma.order.delete({
+      // Soft delete the order
+      await prisma.order.update({
         where: { id },
+        data: { isDeleted: true },
       });
+      
+      // Also soft delete all related order products
+      await prisma.orderProduct.updateMany({
+        where: { orderId: id },
+        data: { isDeleted: true },
+      });
+      
       return true;
     } catch (error) {
       if (error instanceof PrismaClientKnownRequestError && error.code === 'P2025') {

@@ -19,15 +19,21 @@ function mapPrismaUserToIUser(user: User): IUser {
 
 class UserRepo implements IBaseRepository<IUser, RegisterUserDto, UpdateUserDto> {
   async getOne(email: string): Promise<IUser | null> {
-    const user = await prisma.user.findUnique({
-      where: { email },
+    const user = await prisma.user.findFirst({
+      where: { 
+        email,
+        isDeleted: false,
+      },
     });
     return user ? mapPrismaUserToIUser(user) : null;
   }
 
   async getById(id: string): Promise<IUser | null> {
-    const user = await prisma.user.findUnique({
-      where: { id },
+    const user = await prisma.user.findFirst({
+      where: { 
+        id,
+        isDeleted: false,
+      },
     });
     return user ? mapPrismaUserToIUser(user) : null;
   }
@@ -38,11 +44,14 @@ class UserRepo implements IBaseRepository<IUser, RegisterUserDto, UpdateUserDto>
     
     const [users, totalCount] = await Promise.all([
       prisma.user.findMany({
+        where: { isDeleted: false },
         skip,
         take: pageSize,
-        orderBy: { createdAt: 'desc' }
+        orderBy: { createdAt: 'desc' },
       }),
-      prisma.user.count(),
+      prisma.user.count({
+        where: { isDeleted: false },
+      }),
     ]);
     
     return createPaginatedResult(
@@ -63,6 +72,7 @@ class UserRepo implements IBaseRepository<IUser, RegisterUserDto, UpdateUserDto>
         email: data.email,
         password: data.password ?? '',
         role: UserRole.CLIENT,
+        isDeleted: false,
       },
     });
     return mapPrismaUserToIUser(user);

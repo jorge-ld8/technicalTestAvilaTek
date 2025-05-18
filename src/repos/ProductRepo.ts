@@ -18,8 +18,6 @@ function mapPrismaProductToIProduct(product: Product): IProduct {
       ? (product.price as Decimal).toNumber() 
       : Number(product.price),
     stock: product.stock,
-    createdAt: product.createdAt,
-    updatedAt: product.updatedAt,
   };
 }
 
@@ -30,22 +28,28 @@ class ProductRepo implements IBaseRepository<IProduct, CreateProductDto, UpdateP
 
     const [products, totalCount] = await Promise.all([
       prisma.product.findMany({
+        where: { isDeleted: false },
         skip,
         take: pageSize,
         orderBy: { createdAt: 'desc' },
       }),
-      prisma.product.count(),
+      prisma.product.count({
+        where: { isDeleted: false },
+      }),
     ]);
 
     return createPaginatedResult(
       products.map(mapPrismaProductToIProduct),
-      { total: totalCount, currentPage: page, pageSize }
+      { total: totalCount, currentPage: page, pageSize },
     );
   }
 
   async getById(id: string): Promise<IProduct | null> {
-    const product = await prisma.product.findUnique({
-      where: { id },
+    const product = await prisma.product.findFirst({
+      where: { 
+        id,
+        isDeleted: false,
+      },
     });
     return product ? mapPrismaProductToIProduct(product) : null;
   }
@@ -57,6 +61,7 @@ class ProductRepo implements IBaseRepository<IProduct, CreateProductDto, UpdateP
         description: data.description ?? null,
         price: data.price,
         stock: data.stock,
+        isDeleted: false,
       },
     });
     return mapPrismaProductToIProduct(product);
@@ -71,6 +76,7 @@ class ProductRepo implements IBaseRepository<IProduct, CreateProductDto, UpdateP
             description: dto.description ?? null,
             price: dto.price,
             stock: dto.stock,
+            isDeleted: false,
           },
         })
       )
@@ -99,7 +105,7 @@ class ProductRepo implements IBaseRepository<IProduct, CreateProductDto, UpdateP
     }
   }
 
-  async updateMany(productsToUpdate: { id: string, data: UpdateProductDto }[]):Promise<IProduct[]> {
+  async updateMany(productsToUpdate: { id: string, data: UpdateProductDto }[]): Promise<IProduct[]> {
     const updatedProducts: IProduct[] = [];
     
     await prisma.$transaction(async (tx) => {
@@ -128,8 +134,9 @@ class ProductRepo implements IBaseRepository<IProduct, CreateProductDto, UpdateP
 
   async delete(id: string): Promise<boolean> {
     try {
-      await prisma.product.delete({
+      await prisma.product.update({
         where: { id },
+        data: { isDeleted: true },
       });
       return true;
     } catch (error) {
@@ -149,8 +156,9 @@ class ProductRepo implements IBaseRepository<IProduct, CreateProductDto, UpdateP
     await prisma.$transaction(async (tx) => {
       for (const id of ids) {
         try {
-          await tx.product.delete({
+          await tx.product.update({
             where: { id },
+            data: { isDeleted: true },
           });
           results.deleted.push(id);
         } catch (error) {
@@ -179,6 +187,7 @@ class ProductRepo implements IBaseRepository<IProduct, CreateProductDto, UpdateP
           stock: {
             gte: minStock,
           },
+          isDeleted: false,
         },
         orderBy: { createdAt: 'desc' },
       }),
@@ -187,13 +196,14 @@ class ProductRepo implements IBaseRepository<IProduct, CreateProductDto, UpdateP
           stock: {
             gte: minStock,
           },
+          isDeleted: false,
         },
       }),
     ]);
 
     return createPaginatedResult(
       products.map(mapPrismaProductToIProduct),
-      { total: totalCount, currentPage: page, pageSize }
+      { total: totalCount, currentPage: page, pageSize },
     );
   }
 
@@ -226,6 +236,7 @@ class ProductRepo implements IBaseRepository<IProduct, CreateProductDto, UpdateP
           },
         },
       ],
+      isDeleted: false,
     };
 
     const [products, totalCount] = await Promise.all([
