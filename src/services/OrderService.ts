@@ -13,9 +13,19 @@ import ProductService from './ProductService';
 import MessageQueueService, { QueueName } from './MessageQueueService';
 
 class OrderService {
-  private orderRepo = new OrderRepo();
-  private productService = new ProductService();
+  private _orderRepo: OrderRepo | null = null;
+  private _productService: ProductService | null = null;
   private messageQueue = MessageQueueService.getInstance();
+
+  private get productService(): ProductService {
+    this._productService ??= new ProductService();
+    return this._productService;
+  }
+
+  private get orderRepo(): OrderRepo {
+    this._orderRepo ??= new OrderRepo();
+    return this._orderRepo;
+  }
 
   public async createOrder(userId: string, orderData: CreateOrderDto): Promise<OrderResponseDto> {
     if (!orderData.items || orderData.items.length === 0) {
@@ -152,6 +162,27 @@ class OrderService {
     }));
 
     return this.mapOrderToResponseDto(updatedOrder);
+  }
+
+
+  public async getOrdersByProductId(
+    productId: string, 
+    statuses?: OrderStatus[]
+  ): Promise<OrderResponseDto[]> {
+    const orders = await this.orderRepo.findByProductId(productId, statuses);
+    
+    return orders.map(order => this.mapOrderToResponseDto(order));
+  }
+
+
+  public async deleteOrder(orderId: string): Promise<boolean> {
+    const order = await this.orderRepo.getById(orderId);
+    
+    if (!order) {
+      return true;
+    }
+
+    return await this.orderRepo.delete(orderId);
   }
 
   private mapOrderToResponseDto(order: IOrder): OrderResponseDto {

@@ -237,6 +237,46 @@ class OrderRepo implements IBaseRepository<IOrder, CreateOrderRepoDto, UpdateOrd
       throw error;
     }
   }
+
+  async findByProductId(productId: string, statuses?: OrderStatus[]): Promise<IOrder[]> {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const whereClause: Record<string, any> = {
+      isDeleted: false,
+      orderProducts: {
+        some: {
+          productId,
+          isDeleted: false,
+        },
+      },
+    };
+    
+    // Add status filter if provided
+    if (statuses && statuses.length > 0) {
+      whereClause.orderStatus = {
+        in: statuses,
+      };
+    }
+    
+    const orders = await prisma.order.findMany({
+      where: whereClause,
+      include: {
+        orderProducts: {
+          where: { isDeleted: false },
+          include: {
+            product: {
+              select: {
+                name: true,
+                description: true,
+              },
+            },
+          },
+        },
+      },
+      orderBy: { createdAt: 'desc' },
+    });
+    
+    return orders.map(mapPrismaOrderToIOrder);
+  }
 }
 
 export default OrderRepo; 

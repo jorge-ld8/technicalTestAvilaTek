@@ -3,9 +3,22 @@ import ProductRepo from '@src/repos/ProductRepo';
 import { CreateProductDto, ProductResponseDto, UpdateProductDto } from '@src/types/products';
 import { NotFoundError, BadRequestError } from '@src/common/errors';
 import { PaginatedResult, PaginationParams } from '@src/types/common';
+import OrderService from './OrderService';
+import { OrderStatus } from '@src/types/orders.d';
 
 class ProductService {
-  private productRepo = new ProductRepo();
+  private _productRepo: ProductRepo | null = null;
+  private _orderService: OrderService | null = null;
+
+  private get orderService(): OrderService {
+    this._orderService ??= new OrderService();
+    return this._orderService;
+  }
+
+  private get productRepo(): ProductRepo {
+    this._productRepo ??= new ProductRepo();
+    return this._productRepo;
+  }
 
   public async getAll(pagination?: PaginationParams): Promise<PaginatedResult<ProductResponseDto>> {
     const products = await this.productRepo.getAll(pagination);
@@ -45,9 +58,7 @@ class ProductService {
 
     // Validate each product update
     productsToUpdate.forEach(({ data }) => this.validateProductUpdate(data));
-    
-    // Keep track of which products were successfully updated
-    // const existingProducts = new Set<string>();
+
     const existingProducts = await this.productRepo.getAll();
     const existingProductsIds = existingProducts.data.map(product => product.id);
     const allIds = productsToUpdate.map(p => p.id);
@@ -80,7 +91,36 @@ class ProductService {
       throw new BadRequestError('No product IDs provided for deletion');
     }
     
+    // For each product being deleted, find and delete related orders in PENDING or PROCESSING state
+    await Promise.all(ids.map(async (productId) => {
+      await this.deleteRelatedOrders(productId);
+    }));
+    
     return await this.productRepo.deleteMany(ids);
+  }
+
+  /**
+   * Deletes all orders containing a specific product if their status is either PENDING or PROCESSING
+   */
+  private async deleteRelatedOrders(productId: string): Promise<void> {
+    try {
+      // Get orders that contain the product ID with PENDING or PROCESSING status
+      const ordersToDelete = await this.orderService.getOrdersByProductId(
+        productId, 
+        [OrderStatus.PENDING, OrderStatus.PROCESSING],
+      );
+      
+      // Delete each order
+      await Promise.all(ordersToDelete.map(async (order) => {
+        await this.orderService.deleteOrder(order.id);
+      }));
+      
+      console.log(`Deleted ${ordersToDelete.length} orders related to product ${productId}`);
+    } catch (error) {
+      console.error(`Error deleting orders for product ${productId}:`, error);
+      // We don't want to fail the product deletion if order deletion fails
+      // Just log the error and continue
+    }
   }
 
   public async getInStock(minStock = 1, pagination?: PaginationParams): 
