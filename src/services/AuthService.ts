@@ -10,12 +10,14 @@ import
   InternalServerError, 
   NotFoundError, 
 } from '@src/common/errors';
+import { PaginationParams } from '@src/types/common';
+import { PaginatedResult } from '@src/types/common';
 
 class AuthService {
   private userRepo = new UserRepo();
 
-  public async getAll(): Promise<IUser[]> {
-    return await this.userRepo.getAll();
+  public async getAll(pagination?: PaginationParams): Promise<PaginatedResult<IUser>> {
+    return await this.userRepo.getAll(pagination);
   }
 
   public async register(registerUserDto: RegisterUserDto): Promise<RegisterResponse> {
@@ -30,8 +32,8 @@ class AuthService {
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(registerUserDto.password, salt);
     registerUserDto.password = hashedPassword;
-    
-    const user = await this.userRepo.add(registerUserDto);
+
+    const user = await this.userRepo.create(registerUserDto);
     const { password: _, ...userWithoutPassword } = user;
     return { user: userWithoutPassword };
   }

@@ -1,7 +1,10 @@
 import { IUser } from '@src/models/User';
 import prisma, { User } from '@src/common/prisma';
-import { RegisterUserDto, UserRole } from '@src/types/auth';
-
+import { RegisterUserDto, UpdateUserDto, UserRole } from '@src/types/auth.d';
+import { IBaseRepository } from './BaseRepository';
+import { PaginatedResult, PaginationParams } from '@src/types/common';
+import { createPaginatedResult, normalizePaginationParams } from '@src/common/util/pagination';
+import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 
 function mapPrismaUserToIUser(user: User): IUser {
   return {
@@ -14,7 +17,7 @@ function mapPrismaUserToIUser(user: User): IUser {
   };
 }
 
-class UserRepo {
+class UserRepo implements IBaseRepository<IUser, RegisterUserDto, UpdateUserDto> {
   async getOne(email: string): Promise<IUser | null> {
     const user = await prisma.user.findUnique({
       where: { email },
@@ -29,53 +32,91 @@ class UserRepo {
     return user ? mapPrismaUserToIUser(user) : null;
   }
 
-  async getAll(): Promise<IUser[]> {
-    const users = await prisma.user.findMany();
-    return users.map(mapPrismaUserToIUser);
+  async getAll(pagination?: PaginationParams): Promise<PaginatedResult<IUser>> {
+    const { page, pageSize } = normalizePaginationParams(pagination);
+    const skip = (page - 1) * pageSize;
+    
+    const [users, totalCount] = await Promise.all([
+      prisma.user.findMany({
+        skip,
+        take: pageSize,
+        orderBy: { createdAt: 'desc' }
+      }),
+      prisma.user.count(),
+    ]);
+    
+    return createPaginatedResult(
+      users.map(mapPrismaUserToIUser),
+      {
+        total: totalCount,
+        currentPage: page,
+        pageSize,
+      }
+    );
   }
 
-  async add(registerUserDto: RegisterUserDto): Promise<IUser> {
+  async create(data: RegisterUserDto): Promise<IUser> {
     const user = await prisma.user.create({
       data: {
-        firstName: registerUserDto.firstName,
-        lastName: registerUserDto.lastName,
-        email: registerUserDto.email,
-        password: registerUserDto.password ?? '',
+        firstName: data.firstName,
+        lastName: data.lastName,
+        email: data.email,
+        password: data.password ?? '',
+        role: data.role ?? UserRole.CLIENT,
       },
     });
     return mapPrismaUserToIUser(user);
   }
 
-  async update(user: IUser): Promise<void> {
-    await prisma.user.update({
-      where: { id: user.id },
-      data: {
-        firstName: user.firstName,
-        lastName: user.lastName,
-        email: user.email,
-        password: user.password ?? '',
-      },
-    });
+  async update(id: string, data: UpdateUserDto): Promise<IUser | null> {
+    try {
+      const user = await prisma.user.update({
+        where: { id },
+        data: {
+          ...(data.firstName !== undefined && { firstName: data.firstName }),
+          ...(data.lastName !== undefined && { lastName: data.lastName }),
+          ...(data.email !== undefined && { email: data.email }),
+          ...(data.password !== undefined && { password: data.password }),
+          ...(data.role !== undefined && { role: data.role }),
+        },
+      });
+      return mapPrismaUserToIUser(user);
+    } catch (error) {
+      if (error instanceof PrismaClientKnownRequestError && error.code === 'P2025') {
+        return null;
+      }
+      throw error;
+    }
   }
 
-  async delete(id: string): Promise<void> {
-    await prisma.user.delete({
-      where: { id },
-    });
+  async delete(id: string): Promise<boolean> {
+    try {
+      await prisma.user.delete({
+        where: { id },
+      });
+      return true;
+    } catch (error) {
+      if (error instanceof PrismaClientKnownRequestError && error.code === 'P2025') {
+        return false;
+      }
+      throw error;
+    }
   }
 
   async deleteAll(): Promise<void> {
     await prisma.user.deleteMany();
   } 
 
-  async insertMult(users: IUser[]): Promise<IUser[]> {
+  async insertMult(users: RegisterUserDto[]): Promise<IUser[]> {
     const createdUsers = await prisma.$transaction(
-      users.map(user => 
+      users.map(data => 
         prisma.user.create({
           data: {
-            ...user,
-            password: user.password ?? '',
-            createdAt: new Date(),
+            firstName: data.firstName,
+            lastName: data.lastName,
+            email: data.email,
+            password: data.password ?? '',
+            role: data.role ?? UserRole.CLIENT,
           },
         }),
       ),

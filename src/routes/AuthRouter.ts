@@ -1,10 +1,9 @@
 import AuthController from '@src/controllers/AuthController';
-import { RequestHandler, Router } from 'express';
+import { RequestHandler } from 'express';
 import { validateRequest } from '@src/middlewares/validateRequest';
 import { loginSchema, registerSchema } from '@src/validators/auth.validator';
-import { authenticate, authorize } from '@src/middlewares/authMiddleware';
+import { authenticate } from '@src/middlewares/authMiddleware';
 import rateLimiter from 'express-rate-limit';
-import { UserRole } from '@src/types/auth.d';
 import { BaseRouter } from './common/BaseRouter';
 
 const limiter = rateLimiter({
@@ -31,7 +30,6 @@ class AuthRouter extends BaseRouter<AuthController> {
 
     this.router.get('/profile', 
       authenticate,
-      authorize([UserRole.CLIENT]),
       (req, res, next) => this.controller.getProfile(req, res, next));
   }
 }

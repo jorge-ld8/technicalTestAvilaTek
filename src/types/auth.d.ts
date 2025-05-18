@@ -1,4 +1,5 @@
 import { Request } from 'express';
+import { IUser } from '@src/models/User';
 
 export interface AuthenticatedUser {
   id: string; 
@@ -15,6 +16,14 @@ export interface RegisterUserDto {
   lastName: string;
   email: string;
   password: string;
+  role?: UserRole;
+}
+
+export interface UpdateUserDto {
+  firstName?: string;
+  lastName?: string;
+  email?: string;
+  password?: string;
   role?: UserRole;
 }
 

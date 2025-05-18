@@ -2,12 +2,12 @@ import { IProduct } from '@src/models/Product';
 import ProductRepo from '@src/repos/ProductRepo';
 import { CreateProductDto, UpdateProductDto } from '@src/types/products';
 import { NotFoundError, BadRequestError } from '@src/common/errors';
-
+import { PaginatedResult, PaginationParams } from '@src/types/common';
 class ProductService {
   private productRepo = new ProductRepo();
 
-  public async getAll(): Promise<IProduct[]> {
-    return await this.productRepo.getAll();
+  public async getAll(pagination?: PaginationParams): Promise<PaginatedResult<IProduct>> {
+    return await this.productRepo.getAll(pagination);
   }
 
   public async getById(id: string): Promise<IProduct> {
@@ -43,14 +43,6 @@ class ProductService {
     // Keep track of which products were successfully updated
     const existingProducts = new Set<string>();
     const allIds = productsToUpdate.map(p => p.id);
-    
-    // First check which products exist
-    const products = await this.productRepo.getAll();
-    products.forEach(p => {
-      if (allIds.includes(p.id)) {
-        existingProducts.add(p.id);
-      }
-    });
     
     // Filter to only include existing products
     const updatesForExistingProducts = productsToUpdate.filter(p => 

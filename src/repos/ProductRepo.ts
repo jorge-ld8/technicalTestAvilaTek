@@ -1,9 +1,10 @@
 import prisma, { Product } from '@src/common/prisma';
-import { Decimal } from '@prisma/client/runtime/library';
-import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
-import { UpdateProductDto } from '@src/types/products';
-import { CreateProductDto } from '@src/types/products';
+import { Decimal, PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
+import { UpdateProductDto, CreateProductDto } from '@src/types/products';
 import { IProduct } from '@src/models/Product';
+import { IBaseRepository } from './BaseRepository';
+import { PaginatedResult, PaginationParams } from '@src/types/common';
+import { createPaginatedResult, normalizePaginationParams } from '@src/common/util/pagination';
 
 
 // Helper function to convert Prisma Product to IProduct
@@ -21,10 +22,24 @@ function mapPrismaProductToIProduct(product: Product): IProduct {
   };
 }
 
-class ProductRepo {
-  async getAll(): Promise<IProduct[]> {
-    const products = await prisma.product.findMany();
-    return products.map(mapPrismaProductToIProduct);
+class ProductRepo implements IBaseRepository<IProduct, CreateProductDto, UpdateProductDto> {
+  async getAll(pagination?: PaginationParams): Promise<PaginatedResult<IProduct>> {
+    const { page, pageSize } = normalizePaginationParams(pagination);
+    const skip = (page - 1) * pageSize;
+
+    const [products, totalCount] = await Promise.all([
+      prisma.product.findMany({
+        skip,
+        take: pageSize,
+        orderBy: { createdAt: 'desc' },
+      }),
+      prisma.product.count(),
+    ]);
+
+    return createPaginatedResult(
+      products.map(mapPrismaProductToIProduct),
+      { total: totalCount, currentPage: page, pageSize }
+    );
   }
 
   async getById(id: string): Promise<IProduct | null> {
@@ -34,13 +49,13 @@ class ProductRepo {
     return product ? mapPrismaProductToIProduct(product) : null;
   }
 
-  async create(productDto: CreateProductDto): Promise<IProduct> {
+  async create(data: CreateProductDto): Promise<IProduct> {
     const product = await prisma.product.create({
       data: {
-        name: productDto.name,
-        description: productDto.description ?? null,
-        price: productDto.price,
-        stock: productDto.stock,
+        name: data.name,
+        description: data.description ?? null,
+        price: data.price,
+        stock: data.stock,
       },
     });
     return mapPrismaProductToIProduct(product);
@@ -63,20 +78,19 @@ class ProductRepo {
     return createdProducts.map(mapPrismaProductToIProduct);
   }
 
-  async update(id: string, productDto: UpdateProductDto): Promise<IProduct | null> {
+  async update(id: string, data: UpdateProductDto): Promise<IProduct | null> {
     try {
       const product = await prisma.product.update({
         where: { id },
         data: {
-          ...(productDto.name !== undefined && { name: productDto.name }),
-          ...(productDto.description !== undefined && { description: productDto.description }),
-          ...(productDto.price !== undefined && { price: productDto.price }),
-          ...(productDto.stock !== undefined && { stock: productDto.stock }),
+          ...(data.name !== undefined && { name: data.name }),
+          ...(data.description !== undefined && { description: data.description }),
+          ...(data.price !== undefined && { price: data.price }),
+          ...(data.stock !== undefined && { stock: data.stock }),
         },
       });
       return mapPrismaProductToIProduct(product);
     } catch (error) {
-      // Handle case where product doesn't exist
       if (error instanceof PrismaClientKnownRequestError && error.code === 'P2025') {
         return null;
       }
@@ -118,7 +132,6 @@ class ProductRepo {
       });
       return true;
     } catch (error) {
-      // Handle case where product doesn't exist
       if (error instanceof PrismaClientKnownRequestError && error.code === 'P2025') {
         return false;
       }
@@ -152,10 +165,6 @@ class ProductRepo {
     return results;
   }
 
-  async deleteAll(): Promise<void> {
-    await prisma.product.deleteMany();
-  }
-
   async getInStock(minStock = 1): Promise<IProduct[]> {
     const products = await prisma.product.findMany({
       where: {
@@ -167,25 +176,16 @@ class ProductRepo {
     return products.map(mapPrismaProductToIProduct);
   }
 
-  // Update product stock quantity
   async updateStock(id: string, newStock: number): Promise<IProduct | null> {
-    try {
-      const product = await prisma.product.update({
-        where: { id },
-        data: {
-          stock: newStock,
-        },
-      });
-      return mapPrismaProductToIProduct(product);
-    } catch (error) {
-      if (error instanceof PrismaClientKnownRequestError && error.code === 'P2025') {
-        return null;
-      }
-      throw error;
-    }
+    const product = await prisma.product.update({
+      where: { id },
+      data: {
+        stock: newStock,
+      },
+    });
+    return mapPrismaProductToIProduct(product);
   }
 
-  // Search products by name or description
   async search(query: string): Promise<IProduct[]> {
     const products = await prisma.product.findMany({
       where: {
